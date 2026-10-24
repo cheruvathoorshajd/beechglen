@@ -1,0 +1,65 @@
+{
+  "transcript": "I'm on the Pike eastbound near old exit 8 in Palmer. A white SUV and a red pickup just crashed into each other. They're blocking the lane.",
+  "channel": "voice",
+  "model": "claude-sonnet-5-5",
+  "extraction": {
+    "language": "en",
+    "incident_type": "vehicle_crash",
+    "caller_role": "witness",
+    "flags": {
+      "weapon_present": false,
+      "injuries_reported": false,
+      "not_breathing": false,
+      "fire_or_smoke": false,
+      "trapped": false,
+      "child_involved": false
+    },
+    "location": {
+      "street": null,
+      "cross_street": null,
+      "town": "Palmer",
+      "landmark": null,
+      "highway_route": "I-90",
+      "highway_direction": "EB",
+      "highway_exit": "8",
+      "exit_is_old": true,
+      "mile_marker": null,
+      "raw": "the Pike eastbound near old exit 8 in Palmer"
+    },
+    "claims": [
+      {
+        "subject": "vehicle",
+        "attribute": "vehicle_color",
+        "value": "white",
+        "quote": "A white SUV",
+        "first_hand": true,
+        "confidence": 0.95
+      },
+      {
+        "subject": "vehicle",
+        "attribute": "vehicle_type",
+        "value": "suv",
+        "quote": "A white SUV",
+        "first_hand": true,
+        "confidence": 0.95
+      },
+      {
+        "subject": "vehicle_2",
+        "attribute": "vehicle_color",
+        "value": "red",
+        "quote": "a red pickup",
+        "first_hand": true,
+        "confidence": 0.95
+      },
+      {
+        "subject": "vehicle_2",
+        "attribute": "vehicle_type",
+        "value": "pickup",
+        "quote": "a red pickup",
+        "first_hand": true,
+        "confidence": 0.95
+      }
+    ],
+    "summary": "White SUV and red pickup crashed on I-90 eastbound near old exit 8 in Palmer, blocking the lane."
+  }
+}

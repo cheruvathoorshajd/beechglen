@@ -1,0 +1,57 @@
+{
+  "transcript": "I'm on the Pike eastbound near Palmer. There's an SUV and a red pickup crashed in the right lane. Traffic is stopped.",
+  "channel": "voice",
+  "model": "claude-sonnet-5-5",
+  "extraction": {
+    "language": "en",
+    "incident_type": "vehicle_crash",
+    "caller_role": "witness",
+    "flags": {
+      "weapon_present": false,
+      "injuries_reported": false,
+      "not_breathing": false,
+      "fire_or_smoke": false,
+      "trapped": false,
+      "child_involved": false
+    },
+    "location": {
+      "street": null,
+      "cross_street": null,
+      "town": "Palmer",
+      "landmark": null,
+      "highway_route": "I-90",
+      "highway_direction": "EB",
+      "highway_exit": null,
+      "exit_is_old": null,
+      "mile_marker": null,
+      "raw": "the Pike eastbound near Palmer"
+    },
+    "claims": [
+      {
+        "subject": "vehicle",
+        "attribute": "vehicle_type",
+        "value": "suv",
+        "quote": "SUV",
+        "first_hand": true,
+        "confidence": 0.9
+      },
+      {
+        "subject": "vehicle_2",
+        "attribute": "vehicle_color",
+        "value": "red",
+        "quote": "red pickup",
+        "first_hand": true,
+        "confidence": 0.9
+      },
+      {
+        "subject": "vehicle_2",
+        "attribute": "vehicle_type",
+        "value": "pickup",
+        "quote": "red pickup",
+        "first_hand": true,
+        "confidence": 0.9
+      }
+    ],
+    "summary": "Caller reports an SUV and a red pickup crashed in the right lane of the Pike eastbound near Palmer; traffic stopped."
+  }
+}

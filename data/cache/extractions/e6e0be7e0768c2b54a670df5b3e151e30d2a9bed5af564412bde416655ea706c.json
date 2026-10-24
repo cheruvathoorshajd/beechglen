@@ -1,0 +1,57 @@
+{
+  "transcript": "I'm near the store at Mass Ave and Boylston. I saw the man in the white jacket. That's all I saw.",
+  "channel": "voice",
+  "model": "claude-sonnet-5-5",
+  "extraction": {
+    "language": "en",
+    "incident_type": "suspicious_activity",
+    "caller_role": "witness",
+    "flags": {
+      "weapon_present": false,
+      "injuries_reported": false,
+      "not_breathing": false,
+      "fire_or_smoke": false,
+      "trapped": false,
+      "child_involved": false
+    },
+    "location": {
+      "street": "Mass Ave",
+      "cross_street": "Boylston",
+      "town": null,
+      "landmark": "the store",
+      "highway_route": null,
+      "highway_direction": null,
+      "highway_exit": null,
+      "exit_is_old": null,
+      "mile_marker": null,
+      "raw": "near the store at Mass Ave and Boylston"
+    },
+    "claims": [
+      {
+        "subject": "suspect",
+        "attribute": "upper_clothing_color",
+        "value": "white",
+        "quote": "the man in the white jacket",
+        "first_hand": true,
+        "confidence": 0.9
+      },
+      {
+        "subject": "suspect",
+        "attribute": "upper_clothing_type",
+        "value": "jacket",
+        "quote": "the man in the white jacket",
+        "first_hand": true,
+        "confidence": 0.9
+      },
+      {
+        "subject": "suspect",
+        "attribute": "sex",
+        "value": "male",
+        "quote": "the man in the white jacket",
+        "first_hand": true,
+        "confidence": 0.85
+      }
+    ],
+    "summary": "Caller near a store at Mass Ave and Boylston saw a man in a white jacket."
+  }
+}

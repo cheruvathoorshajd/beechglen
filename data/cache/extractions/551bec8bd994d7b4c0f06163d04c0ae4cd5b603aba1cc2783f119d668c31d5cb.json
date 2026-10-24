@@ -1,0 +1,65 @@
+{
+  "transcript": "I'm around mile marker 62 on the Pike eastbound. A white SUV hit a red pickup. Traffic is backing up behind them.",
+  "channel": "voice",
+  "model": "claude-sonnet-5-5",
+  "extraction": {
+    "language": "en",
+    "incident_type": "vehicle_crash",
+    "caller_role": "witness",
+    "flags": {
+      "weapon_present": false,
+      "injuries_reported": false,
+      "not_breathing": false,
+      "fire_or_smoke": false,
+      "trapped": false,
+      "child_involved": false
+    },
+    "location": {
+      "street": null,
+      "cross_street": null,
+      "town": null,
+      "landmark": null,
+      "highway_route": "I-90",
+      "highway_direction": "EB",
+      "highway_exit": null,
+      "exit_is_old": null,
+      "mile_marker": 62.0,
+      "raw": "around mile marker 62 on the Pike eastbound"
+    },
+    "claims": [
+      {
+        "subject": "vehicle",
+        "attribute": "vehicle_color",
+        "value": "white",
+        "quote": "A white SUV hit a red pickup",
+        "first_hand": true,
+        "confidence": 0.9
+      },
+      {
+        "subject": "vehicle",
+        "attribute": "vehicle_type",
+        "value": "suv",
+        "quote": "A white SUV hit a red pickup",
+        "first_hand": true,
+        "confidence": 0.9
+      },
+      {
+        "subject": "vehicle_2",
+        "attribute": "vehicle_color",
+        "value": "red",
+        "quote": "A white SUV hit a red pickup",
+        "first_hand": true,
+        "confidence": 0.9
+      },
+      {
+        "subject": "vehicle_2",
+        "attribute": "vehicle_type",
+        "value": "pickup",
+        "quote": "A white SUV hit a red pickup",
+        "first_hand": true,
+        "confidence": 0.9
+      }
+    ],
+    "summary": "A white SUV hit a red pickup near mile marker 62 on I-90 eastbound; traffic backing up."
+  }
+}

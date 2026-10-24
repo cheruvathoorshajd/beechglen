@@ -1,0 +1,65 @@
+{
+  "transcript": "Estoy en la tienda de Mass Ave y Boylston. Vi al hombre con una chaqueta blanca. Corrió hacia la estación.",
+  "channel": "voice",
+  "model": "claude-sonnet-5-5",
+  "extraction": {
+    "language": "es",
+    "incident_type": "suspicious_activity",
+    "caller_role": "witness",
+    "flags": {
+      "weapon_present": false,
+      "injuries_reported": false,
+      "not_breathing": false,
+      "fire_or_smoke": false,
+      "trapped": false,
+      "child_involved": false
+    },
+    "location": {
+      "street": "Mass Ave",
+      "cross_street": "Boylston",
+      "town": null,
+      "landmark": null,
+      "highway_route": null,
+      "highway_direction": null,
+      "highway_exit": null,
+      "exit_is_old": null,
+      "mile_marker": null,
+      "raw": "la tienda de Mass Ave y Boylston"
+    },
+    "claims": [
+      {
+        "subject": "suspect",
+        "attribute": "sex",
+        "value": "male",
+        "quote": "Vi al hombre",
+        "first_hand": true,
+        "confidence": 0.9
+      },
+      {
+        "subject": "suspect",
+        "attribute": "upper_clothing_color",
+        "value": "white",
+        "quote": "chaqueta blanca",
+        "first_hand": true,
+        "confidence": 0.95
+      },
+      {
+        "subject": "suspect",
+        "attribute": "upper_clothing_type",
+        "value": "jacket",
+        "quote": "chaqueta blanca",
+        "first_hand": true,
+        "confidence": 0.95
+      },
+      {
+        "subject": "suspect",
+        "attribute": "direction_of_travel",
+        "value": "toward station",
+        "quote": "Corrió hacia la estación",
+        "first_hand": true,
+        "confidence": 0.85
+      }
+    ],
+    "summary": "Caller at a store at Mass Ave and Boylston saw a man in a white jacket run toward the station."
+  }
+}

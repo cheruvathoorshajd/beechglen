@@ -1,0 +1,57 @@
+{
+  "transcript": "I'm by the store at Mass Ave and Boylston. The man who robbed it had a white jacket. That's all I know.",
+  "channel": "voice",
+  "model": "claude-sonnet-5-5",
+  "extraction": {
+    "language": "en",
+    "incident_type": "robbery",
+    "caller_role": "bystander",
+    "flags": {
+      "weapon_present": false,
+      "injuries_reported": false,
+      "not_breathing": false,
+      "fire_or_smoke": false,
+      "trapped": false,
+      "child_involved": false
+    },
+    "location": {
+      "street": "Mass Ave",
+      "cross_street": "Boylston",
+      "town": null,
+      "landmark": null,
+      "highway_route": null,
+      "highway_direction": null,
+      "highway_exit": null,
+      "exit_is_old": null,
+      "mile_marker": null,
+      "raw": "by the store at Mass Ave and Boylston"
+    },
+    "claims": [
+      {
+        "subject": "suspect",
+        "attribute": "upper_clothing_color",
+        "value": "white",
+        "quote": "white jacket",
+        "first_hand": true,
+        "confidence": 0.8
+      },
+      {
+        "subject": "suspect",
+        "attribute": "upper_clothing_type",
+        "value": "jacket",
+        "quote": "white jacket",
+        "first_hand": true,
+        "confidence": 0.8
+      },
+      {
+        "subject": "suspect",
+        "attribute": "sex",
+        "value": "male",
+        "quote": "The man who robbed it",
+        "first_hand": true,
+        "confidence": 0.8
+      }
+    ],
+    "summary": "Caller near store at Mass Ave and Boylston reports a robbery; suspect is a man in a white jacket."
+  }
+}

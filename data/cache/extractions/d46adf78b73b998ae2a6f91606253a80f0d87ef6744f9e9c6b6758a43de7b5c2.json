@@ -1,0 +1,49 @@
+{
+  "transcript": "I'm at Mass Ave and Boylston, right by the store. The robber had a white jacket. He was carrying a gray backpack.",
+  "channel": "voice",
+  "model": "claude-sonnet-5-5",
+  "extraction": {
+    "language": "en",
+    "incident_type": "robbery",
+    "caller_role": "unknown",
+    "flags": {
+      "weapon_present": false,
+      "injuries_reported": false,
+      "not_breathing": false,
+      "fire_or_smoke": false,
+      "trapped": false,
+      "child_involved": false
+    },
+    "location": {
+      "street": "Mass Ave",
+      "cross_street": "Boylston",
+      "town": null,
+      "landmark": "the store",
+      "highway_route": null,
+      "highway_direction": null,
+      "highway_exit": null,
+      "exit_is_old": null,
+      "mile_marker": null,
+      "raw": "Mass Ave and Boylston, right by the store"
+    },
+    "claims": [
+      {
+        "subject": "suspect",
+        "attribute": "upper_clothing_color",
+        "value": "white",
+        "quote": "The robber had a white jacket",
+        "first_hand": true,
+        "confidence": 0.9
+      },
+      {
+        "subject": "suspect",
+        "attribute": "upper_clothing_type",
+        "value": "jacket",
+        "quote": "The robber had a white jacket",
+        "first_hand": true,
+        "confidence": 0.9
+      }
+    ],
+    "summary": "Caller at Mass Ave and Boylston reports a robber in a white jacket carrying a gray backpack."
+  }
+}

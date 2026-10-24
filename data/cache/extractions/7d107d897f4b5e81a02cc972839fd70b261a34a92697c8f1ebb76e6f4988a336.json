@@ -1,0 +1,49 @@
+{
+  "transcript": "I called a few minutes ago and I'm still near the store at Mass Ave and Boylston. I'm calling again because it was a black jacket. I'm sure the jacket was black.",
+  "channel": "voice",
+  "model": "claude-sonnet-5-5",
+  "extraction": {
+    "language": "en",
+    "incident_type": "other",
+    "caller_role": "unknown",
+    "flags": {
+      "weapon_present": false,
+      "injuries_reported": false,
+      "not_breathing": false,
+      "fire_or_smoke": false,
+      "trapped": false,
+      "child_involved": false
+    },
+    "location": {
+      "street": "Mass Ave",
+      "cross_street": "Boylston",
+      "town": null,
+      "landmark": "the store",
+      "highway_route": null,
+      "highway_direction": null,
+      "highway_exit": null,
+      "exit_is_old": null,
+      "mile_marker": null,
+      "raw": "near the store at Mass Ave and Boylston"
+    },
+    "claims": [
+      {
+        "subject": "suspect",
+        "attribute": "upper_clothing_color",
+        "value": "black",
+        "quote": "it was a black jacket",
+        "first_hand": true,
+        "confidence": 0.8
+      },
+      {
+        "subject": "suspect",
+        "attribute": "upper_clothing_type",
+        "value": "jacket",
+        "quote": "it was a black jacket",
+        "first_hand": true,
+        "confidence": 0.8
+      }
+    ],
+    "summary": "Caller near store at Mass Ave and Boylston calls again to confirm a black jacket description."
+  }
+}

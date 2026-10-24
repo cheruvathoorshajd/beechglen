@@ -1,0 +1,49 @@
+{
+  "transcript": "I'm at Mass Ave and Newbury. The guy from the store just pulled a knife on someone here. He's pointing the knife at people.",
+  "channel": "voice",
+  "model": "claude-sonnet-5-5",
+  "extraction": {
+    "language": "en",
+    "incident_type": "assault",
+    "caller_role": "witness",
+    "flags": {
+      "weapon_present": true,
+      "injuries_reported": false,
+      "not_breathing": false,
+      "fire_or_smoke": false,
+      "trapped": false,
+      "child_involved": false
+    },
+    "location": {
+      "street": "Mass Ave",
+      "cross_street": "Newbury",
+      "town": null,
+      "landmark": null,
+      "highway_route": null,
+      "highway_direction": null,
+      "highway_exit": null,
+      "exit_is_old": null,
+      "mile_marker": null,
+      "raw": "Mass Ave and Newbury"
+    },
+    "claims": [
+      {
+        "subject": "suspect",
+        "attribute": "weapon",
+        "value": "knife",
+        "quote": "The guy from the store just pulled a knife on someone here.",
+        "first_hand": true,
+        "confidence": 0.95
+      },
+      {
+        "subject": "suspect",
+        "attribute": "sex",
+        "value": "male",
+        "quote": "The guy from the store",
+        "first_hand": true,
+        "confidence": 0.8
+      }
+    ],
+    "summary": "Man from a store pulled a knife on someone and is pointing it at people at Mass Ave and Newbury."
+  }
+}

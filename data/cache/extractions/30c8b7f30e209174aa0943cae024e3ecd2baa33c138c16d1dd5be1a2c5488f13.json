@@ -1,0 +1,65 @@
+{
+  "transcript": "Estou na Pike sentido leste perto de Palmer. Teve um acidente entre um SUV branco e uma picape vermelha. Os carros estão parados na pista.",
+  "channel": "voice",
+  "model": "claude-sonnet-5-5",
+  "extraction": {
+    "language": "pt",
+    "incident_type": "vehicle_crash",
+    "caller_role": "witness",
+    "flags": {
+      "weapon_present": false,
+      "injuries_reported": false,
+      "not_breathing": false,
+      "fire_or_smoke": false,
+      "trapped": false,
+      "child_involved": false
+    },
+    "location": {
+      "street": null,
+      "cross_street": null,
+      "town": "Palmer",
+      "landmark": null,
+      "highway_route": "I-90",
+      "highway_direction": "EB",
+      "highway_exit": null,
+      "exit_is_old": null,
+      "mile_marker": null,
+      "raw": "Pike sentido leste perto de Palmer"
+    },
+    "claims": [
+      {
+        "subject": "vehicle",
+        "attribute": "vehicle_type",
+        "value": "suv",
+        "quote": "SUV branco",
+        "first_hand": true,
+        "confidence": 0.95
+      },
+      {
+        "subject": "vehicle",
+        "attribute": "vehicle_color",
+        "value": "white",
+        "quote": "SUV branco",
+        "first_hand": true,
+        "confidence": 0.95
+      },
+      {
+        "subject": "vehicle_2",
+        "attribute": "vehicle_type",
+        "value": "pickup",
+        "quote": "picape vermelha",
+        "first_hand": true,
+        "confidence": 0.95
+      },
+      {
+        "subject": "vehicle_2",
+        "attribute": "vehicle_color",
+        "value": "red",
+        "quote": "picape vermelha",
+        "first_hand": true,
+        "confidence": 0.95
+      }
+    ],
+    "summary": "Crash between a white SUV and a red pickup, stopped in the lane on the Pike eastbound near Palmer."
+  }
+}

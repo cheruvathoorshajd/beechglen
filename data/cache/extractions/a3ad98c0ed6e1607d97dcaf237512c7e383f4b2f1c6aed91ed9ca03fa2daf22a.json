@@ -1,0 +1,41 @@
+{
+  "transcript": "Two men are fighting on Washington Street. They're punching each other right in front of me. Please send someone.",
+  "channel": "voice",
+  "model": "claude-sonnet-5-5",
+  "extraction": {
+    "language": "en",
+    "incident_type": "assault",
+    "caller_role": "witness",
+    "flags": {
+      "weapon_present": false,
+      "injuries_reported": false,
+      "not_breathing": false,
+      "fire_or_smoke": false,
+      "trapped": false,
+      "child_involved": false
+    },
+    "location": {
+      "street": "Washington Street",
+      "cross_street": null,
+      "town": null,
+      "landmark": null,
+      "highway_route": null,
+      "highway_direction": null,
+      "highway_exit": null,
+      "exit_is_old": null,
+      "mile_marker": null,
+      "raw": "Washington Street"
+    },
+    "claims": [
+      {
+        "subject": "scene",
+        "attribute": "people_count",
+        "value": "2",
+        "quote": "Two men are fighting",
+        "first_hand": true,
+        "confidence": 0.9
+      }
+    ],
+    "summary": "Caller witnesses two men punching each other in a fight on Washington Street."
+  }
+}

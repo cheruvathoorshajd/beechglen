@@ -1,0 +1,65 @@
+{
+  "transcript": "I'm at the corner of Mass Ave and Boylston by the store. A guy in a white jacket ran right past me. He was heading toward Hynes.",
+  "channel": "voice",
+  "model": "claude-sonnet-5-5",
+  "extraction": {
+    "language": "en",
+    "incident_type": "suspicious_activity",
+    "caller_role": "witness",
+    "flags": {
+      "weapon_present": false,
+      "injuries_reported": false,
+      "not_breathing": false,
+      "fire_or_smoke": false,
+      "trapped": false,
+      "child_involved": false
+    },
+    "location": {
+      "street": "Mass Ave",
+      "cross_street": "Boylston",
+      "town": null,
+      "landmark": "the store",
+      "highway_route": null,
+      "highway_direction": null,
+      "highway_exit": null,
+      "exit_is_old": null,
+      "mile_marker": null,
+      "raw": "the corner of Mass Ave and Boylston by the store"
+    },
+    "claims": [
+      {
+        "subject": "suspect",
+        "attribute": "upper_clothing_color",
+        "value": "white",
+        "quote": "A guy in a white jacket",
+        "first_hand": true,
+        "confidence": 0.9
+      },
+      {
+        "subject": "suspect",
+        "attribute": "upper_clothing_type",
+        "value": "jacket",
+        "quote": "A guy in a white jacket",
+        "first_hand": true,
+        "confidence": 0.9
+      },
+      {
+        "subject": "suspect",
+        "attribute": "sex",
+        "value": "male",
+        "quote": "A guy",
+        "first_hand": true,
+        "confidence": 0.85
+      },
+      {
+        "subject": "suspect",
+        "attribute": "direction_of_travel",
+        "value": "toward hynes",
+        "quote": "He was heading toward Hynes.",
+        "first_hand": true,
+        "confidence": 0.9
+      }
+    ],
+    "summary": "Caller at Mass Ave and Boylston saw a man in a white jacket run past toward Hynes."
+  }
+}

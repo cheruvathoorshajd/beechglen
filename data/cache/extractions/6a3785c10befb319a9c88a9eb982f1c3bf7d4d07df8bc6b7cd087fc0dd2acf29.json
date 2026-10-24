@@ -1,0 +1,32 @@
+{
+  "transcript": "There's a fight outside a bar on Washington Street. A few guys are shoving and swinging at each other. It's getting worse.",
+  "channel": "voice",
+  "model": "claude-sonnet-5-5",
+  "extraction": {
+    "language": "en",
+    "incident_type": "assault",
+    "caller_role": "witness",
+    "flags": {
+      "weapon_present": false,
+      "injuries_reported": false,
+      "not_breathing": false,
+      "fire_or_smoke": false,
+      "trapped": false,
+      "child_involved": false
+    },
+    "location": {
+      "street": "Washington Street",
+      "cross_street": null,
+      "town": null,
+      "landmark": "bar",
+      "highway_route": null,
+      "highway_direction": null,
+      "highway_exit": null,
+      "exit_is_old": null,
+      "mile_marker": null,
+      "raw": "outside a bar on Washington Street"
+    },
+    "claims": [],
+    "summary": "Fight escalating outside a bar on Washington Street; several men shoving and swinging at each other."
+  }
+}

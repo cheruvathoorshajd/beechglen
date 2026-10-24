@@ -1,0 +1,57 @@
+{
+  "transcript": "I'm near the store at Mass Ave and Boylston. A man just ran out of the store. He was wearing a black jacket.",
+  "channel": "voice",
+  "model": "claude-sonnet-5-5",
+  "extraction": {
+    "language": "en",
+    "incident_type": "other",
+    "caller_role": "witness",
+    "flags": {
+      "weapon_present": false,
+      "injuries_reported": false,
+      "not_breathing": false,
+      "fire_or_smoke": false,
+      "trapped": false,
+      "child_involved": false
+    },
+    "location": {
+      "street": "Mass Ave",
+      "cross_street": "Boylston",
+      "town": null,
+      "landmark": null,
+      "highway_route": null,
+      "highway_direction": null,
+      "highway_exit": null,
+      "exit_is_old": null,
+      "mile_marker": null,
+      "raw": "near the store at Mass Ave and Boylston"
+    },
+    "claims": [
+      {
+        "subject": "suspect",
+        "attribute": "upper_clothing_color",
+        "value": "black",
+        "quote": "He was wearing a black jacket",
+        "first_hand": true,
+        "confidence": 0.9
+      },
+      {
+        "subject": "suspect",
+        "attribute": "upper_clothing_type",
+        "value": "jacket",
+        "quote": "He was wearing a black jacket",
+        "first_hand": true,
+        "confidence": 0.9
+      },
+      {
+        "subject": "suspect",
+        "attribute": "sex",
+        "value": "male",
+        "quote": "A man just ran out of the store",
+        "first_hand": true,
+        "confidence": 0.8
+      }
+    ],
+    "summary": "Caller near store at Mass Ave and Boylston reports a man in a black jacket just ran out of the store."
+  }
+}

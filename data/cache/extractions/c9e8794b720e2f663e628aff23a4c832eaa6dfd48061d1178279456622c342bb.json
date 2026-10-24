@@ -1,0 +1,49 @@
+{
+  "transcript": "I'm near the store at Mass Ave and Boylston where the robbery happened. I didn't see it myself. My neighbor told me the guy had a black jacket.",
+  "channel": "voice",
+  "model": "claude-sonnet-5-5",
+  "extraction": {
+    "language": "en",
+    "incident_type": "robbery",
+    "caller_role": "bystander",
+    "flags": {
+      "weapon_present": false,
+      "injuries_reported": false,
+      "not_breathing": false,
+      "fire_or_smoke": false,
+      "trapped": false,
+      "child_involved": false
+    },
+    "location": {
+      "street": "Mass Ave",
+      "cross_street": "Boylston",
+      "town": null,
+      "landmark": null,
+      "highway_route": null,
+      "highway_direction": null,
+      "highway_exit": null,
+      "exit_is_old": null,
+      "mile_marker": null,
+      "raw": "near the store at Mass Ave and Boylston"
+    },
+    "claims": [
+      {
+        "subject": "suspect",
+        "attribute": "upper_clothing_color",
+        "value": "black",
+        "quote": "My neighbor told me the guy had a black jacket",
+        "first_hand": false,
+        "confidence": 0.9
+      },
+      {
+        "subject": "suspect",
+        "attribute": "upper_clothing_type",
+        "value": "jacket",
+        "quote": "My neighbor told me the guy had a black jacket",
+        "first_hand": false,
+        "confidence": 0.9
+      }
+    ],
+    "summary": "Caller near Mass Ave and Boylston reports a store robbery secondhand; neighbor said suspect wore a black jacket."
+  }
+}

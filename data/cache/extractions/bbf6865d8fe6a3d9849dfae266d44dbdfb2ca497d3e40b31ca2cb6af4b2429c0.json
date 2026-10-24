@@ -1,0 +1,49 @@
+{
+  "transcript": "I'm walking past a fight on Washington Street. One guy has a bottle in his hand. I'm staying back.",
+  "channel": "voice",
+  "model": "claude-sonnet-5-5",
+  "extraction": {
+    "language": "en",
+    "incident_type": "assault",
+    "caller_role": "bystander",
+    "flags": {
+      "weapon_present": true,
+      "injuries_reported": false,
+      "not_breathing": false,
+      "fire_or_smoke": false,
+      "trapped": false,
+      "child_involved": false
+    },
+    "location": {
+      "street": "Washington Street",
+      "cross_street": null,
+      "town": null,
+      "landmark": null,
+      "highway_route": null,
+      "highway_direction": null,
+      "highway_exit": null,
+      "exit_is_old": null,
+      "mile_marker": null,
+      "raw": "Washington Street"
+    },
+    "claims": [
+      {
+        "subject": "suspect",
+        "attribute": "weapon",
+        "value": "bottle",
+        "quote": "One guy has a bottle in his hand",
+        "first_hand": true,
+        "confidence": 0.9
+      },
+      {
+        "subject": "suspect",
+        "attribute": "sex",
+        "value": "male",
+        "quote": "One guy has a bottle in his hand",
+        "first_hand": true,
+        "confidence": 0.8
+      }
+    ],
+    "summary": "Caller walking past a fight on Washington Street; one man holds a bottle. Caller staying back."
+  }
+}

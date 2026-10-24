@@ -1,0 +1,73 @@
+{
+  "transcript": "I'm the clerk at the convenience store at Mass Ave and Boylston. We just had an armed robbery. A man in a white jacket and jeans took the cash from the register. He ran toward Hynes station.",
+  "channel": "voice",
+  "model": "claude-sonnet-5-5",
+  "extraction": {
+    "language": "en",
+    "incident_type": "robbery",
+    "caller_role": "victim",
+    "flags": {
+      "weapon_present": true,
+      "injuries_reported": false,
+      "not_breathing": false,
+      "fire_or_smoke": false,
+      "trapped": false,
+      "child_involved": false
+    },
+    "location": {
+      "street": "Mass Ave",
+      "cross_street": "Boylston",
+      "town": null,
+      "landmark": null,
+      "highway_route": null,
+      "highway_direction": null,
+      "highway_exit": null,
+      "exit_is_old": null,
+      "mile_marker": null,
+      "raw": "the convenience store at Mass Ave and Boylston"
+    },
+    "claims": [
+      {
+        "subject": "suspect",
+        "attribute": "upper_clothing_color",
+        "value": "white",
+        "quote": "white jacket",
+        "first_hand": true,
+        "confidence": 0.95
+      },
+      {
+        "subject": "suspect",
+        "attribute": "upper_clothing_type",
+        "value": "jacket",
+        "quote": "white jacket",
+        "first_hand": true,
+        "confidence": 0.95
+      },
+      {
+        "subject": "suspect",
+        "attribute": "lower_clothing",
+        "value": "jeans",
+        "quote": "jeans",
+        "first_hand": true,
+        "confidence": 0.95
+      },
+      {
+        "subject": "suspect",
+        "attribute": "sex",
+        "value": "male",
+        "quote": "A man",
+        "first_hand": true,
+        "confidence": 0.9
+      },
+      {
+        "subject": "suspect",
+        "attribute": "direction_of_travel",
+        "value": "toward hynes station",
+        "quote": "He ran toward Hynes station",
+        "first_hand": true,
+        "confidence": 0.9
+      }
+    ],
+    "summary": "Convenience store clerk reports armed robbery; man in white jacket and jeans took register cash and fled toward Hynes station."
+  }
+}

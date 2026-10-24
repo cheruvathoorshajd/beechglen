@@ -1,0 +1,41 @@
+{
+  "transcript": "There's smoke pouring out of a third-floor window on Westland Ave. People are trapped inside. I can hear them screaming.",
+  "channel": "voice",
+  "model": "claude-sonnet-5-5",
+  "extraction": {
+    "language": "en",
+    "incident_type": "fire",
+    "caller_role": "witness",
+    "flags": {
+      "weapon_present": false,
+      "injuries_reported": false,
+      "not_breathing": false,
+      "fire_or_smoke": true,
+      "trapped": true,
+      "child_involved": false
+    },
+    "location": {
+      "street": "Westland Ave",
+      "cross_street": null,
+      "town": null,
+      "landmark": null,
+      "highway_route": null,
+      "highway_direction": null,
+      "highway_exit": null,
+      "exit_is_old": null,
+      "mile_marker": null,
+      "raw": "Westland Ave"
+    },
+    "claims": [
+      {
+        "subject": "scene",
+        "attribute": "hazard",
+        "value": "smoke",
+        "quote": "There's smoke pouring out of a third-floor window",
+        "first_hand": true,
+        "confidence": 0.95
+      }
+    ],
+    "summary": "Smoke pouring from a third-floor window on Westland Ave; caller hears trapped people screaming inside."
+  }
+}
