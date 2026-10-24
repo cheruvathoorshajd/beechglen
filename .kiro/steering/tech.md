@@ -33,7 +33,8 @@ inclusion: always
 ## Frontend
 - React + TypeScript (strict) from the Vite react-ts template, Tailwind CSS v3, Leaflet + react-leaflet, Zustand, react-router-dom. No other UI, chart or component libraries.
 - frontend/src/api/types.ts mirrors backend/app/contracts.py field for field.
-- Dark dispatch-console theme. Priority colors: red at 80+, amber 50-79, slate below 50.
+- Look and feel follow .kiro/steering/style-guide.md (tokens, type, components, console mapping); design/ holds the mock and screen copy. Fonts are the @fontsource packages (Fraunces Variable, IBM Plex Sans, IBM Plex Mono), the only additions to the stack.
+- Priority colors: brand (crimson fill) at 80+, warn (yellow outline) 50-79, ink-soft (grey) below 50, always with the number.
 
 ## Commands
 - Backend: `python run.py` (port 8080, docs at /docs). Tests: `pytest -q` from the repo root.

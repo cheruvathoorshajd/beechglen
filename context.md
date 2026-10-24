@@ -73,6 +73,35 @@ The terminal tool times out on slow commands and garbles long or multi-line ones
 | D17 | Overrides: `new_weapon` if a weapon value is unseen or the weapon flag is new; `new_injury` if the call reports any injury and the incident had none; `injury_increase` only when the incident already had a count; `new_hazard` per category (fire/smoke, trapped). A call that creates an incident gets only `new_incident` (no floor). | README "6. Prioritize". |
 | D15 | Gazetteer fixes found while testing: phrase aliases match whole words after suffix expansion ("Massachusetts Avenue" used to become "massachusetts avenuenue"); suffix-less names ("Boylston") match "boylston street"; route aliases match whole words ("I-290" no longer maps to I-90); exit text like "exit 63" parses; landmark aliases match whole words and the raw location text is scanned only when no street or landmark was extracted ("ran toward Hynes" no longer relocates a store call to the station). | Each one broke a demo scenario path. |
 
+## Stage 8: design port (KIRO_DESIGN_PROMPTS.md)
+
+Stage 8 (frontend) follows `KIRO_DESIGN_PROMPTS.md` section 2. Sources: `.kiro/steering/style-guide.md` (looks), `design/V2_SCREENS.md` (landing, sign-in, onboarding, console header words and behavior), README.md (behavior, data, endpoints). `design/nexus911-mock.html`, `design/STYLE_GUIDE.html` and `design/PORT_PLAN.md` are for layout, interaction and CSS only. Never run `design/FRONTEND_BUILD_PROMPT.md` (v1 prompt) or copy the mock's v1 wording.
+
+### Recorded design decisions (don't revisit)
+
+- Tailwind 3 stays. Tokens on `:root` in `src/index.css`, mirrored in `tailwind.config.js` `theme.extend` (colors, fontFamily, borderRadius). No Tailwind v4 `@theme`.
+- Fonts from @fontsource, imported in `src/main.tsx` (bundled, works offline): `@fontsource-variable/fraunces` (roman + italic, opsz axis if offered), `@fontsource/ibm-plex-sans` 400/500/600/700 + italic 400, `@fontsource/ibm-plex-mono` 400/500. Latin-only files where available. Serif stack `"Fraunces Variable", Fraunces, Georgia, serif`. No Google Fonts link, no Outfit.
+- Font packages are the only new dependencies. Icons: inline-SVG `Icon` component from the mock's `<symbol>`s (24×24, 1.8 stroke); new icons only when needed, same style.
+- Landing, sign-in and onboarding: the mock's class-based CSS ported to plain `landing.css`, `auth.css`, `onboarding.css`, renaming `--accent`→`--brand`, `--accent-rule`→`--brand-rule`, `--accent-tint`→`--brand-tint`, `--bad`→`--brand`. Field errors use the guide's `.ferr` (white text, crimson ✕), not the mock's crimson `.field-err`. Console components use Tailwind with the theme tokens.
+- No backend changes. Sign-in is name only, kept in the browser; guests get every feature.
+- Map darkens OSM tiles with a CSS filter on `.leaflet-tile-pane`. Offline, tiles don't load; everything else works.
+- Commits: `stage-8.D<N>: <summary>`, local only. After each stage: background build + Vitest, update this file, commit.
+
+### Design checklist
+
+- [x] D1 Foundations: README "Frontend" + tech.md frontend section; font packages; tokens + base styles (body, :focus-visible, text-wrap: balance, reduced motion); primitives in `src/ui/` (Wordmark, Button, Badge, Tag, SpecLabel, ConfidenceBar, Field, Segmented, ChoiceCard, Disc, Bloom, LiveDot, Icon); remove off-palette colors.
+- [ ] D2 Console: every C1 task (data layer, mocks, shell, queue + map, incident panel + Why linked, ask-next + dispatch, officer, sim) built in the "Console mapping" style; Wordmark in the top bar; Vitest for priority pill thresholds and the Critical badge word.
+- [ ] D3 Landing at `/` (V2_SCREENS.md); console default `/operator`; CTAs go to `/operator` until D4.
+- [ ] D4 Session module, route guard, sign-in, console header (who chip, Replay intro, Sign out); Vitest for session.ts (incl. throwing storage), guard redirects, name validation.
+- [ ] D5 Onboarding wizard; Vitest for Escape skipping, focus to each heading, server-down state.
+- [ ] D6 Verify: backend suite, build, Vitest (background, exit marker); grep hex/rgb/rgba/Tailwind color utilities outside token files; contrast table; README + context.md; browser checklist.
+
+### Where it stands
+
+- D1 done: `@fontsource-variable/fraunces`, `@fontsource/ibm-plex-sans`, `@fontsource/ibm-plex-mono` 5.3.0 (pinned). Fraunces uses `opsz.css` + `opsz-italic.css` (family "Fraunces Variable", wght 100–900); Plex uses `latin-*` files. Tokens in `src/index.css` (adds `--brand-glow` .30 for the bloom, `--warn-rule`/`--warn-tint` for the prototype notice, `--ground-veil` for the wizard footer), mirrored in `tailwind.config.js` (`rounded` = 3px, `rounded-pill`). Primitives in `src/ui/index.tsx` + `src/ui/Icon.tsx`, styles in `src/ui/ui.css` (imported in main.tsx). Also: `Contested`, `buttonClass()`, `formatShare()`, `nextIndex()` (roving radiogroup keys). No off-palette code existed yet (frontend had only `types.ts`). `src/App.tsx` is a D1 placeholder replaced in D2. Verify: `.kiro/logs/fe-d1.txt` build ✓, Vitest 6/6.
+- Frontend commands (repo root): build+test in background `(cd frontend && npm run build > ../.kiro/logs/fe-dN.txt 2>&1 && npx vitest run >> ../.kiro/logs/fe-dN.txt 2>&1; echo "exit=$?" >> ../.kiro/logs/fe-dN.txt) &`, then the wait line.
+- Next: D2 console.
+
 ## Build state
 
 Done before this session (commit `d9ec1a3`): contracts.py, config.py, audit.py,
@@ -106,7 +135,7 @@ scripts, scenarios, cache, frontend, Dockerfile, tests).
 - [x] Stage 5: `flow/`, `context.py`, `graph/views.py`, store additions + flow test (A-8)
 - [x] Stage 6: `realtime/bus.py`, `api/routes_*.py`, `main.py`, `run.py`, `llm/assist.py` (ask-next, briefing), `sim/replay.py` + API tests (B-4..B-7)
 - [x] Stage 7: `scripts/precompute_extractions.py`, `scripts/evaluate.py`; run precompute (I2); `test_scenarios.py` (I4); evaluation table in README (P1)
-- [ ] Stage 8: frontend (0.6, 0.7, C-1..C-7, I3, P2) + build + smoke tests + mock/contract check
+- [ ] Stage 8: frontend (0.6, 0.7, C-1..C-7, I3, P2) + build + smoke tests + mock/contract check, done as design stages D1–D6 (see "Stage 8: design port")
 - [ ] Stage 9: Dockerfile and .dockerignore (C-8). Deploy (P3) is left to the user.
 - [ ] Stage 10: stretch S1 caller chat, S2 corroboration agent + panel + tests
 - [ ] Stage 11: full test run, README layout/evaluation, specs tasks.md, design.md corrections, final context.md

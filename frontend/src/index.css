@@ -1,0 +1,98 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Design tokens (.kiro/steering/style-guide.md). The only place colors are defined;
+   tailwind.config.js mirrors them. Dark only. */
+:root {
+  color-scheme: dark;
+  --ground: #000000;
+  --card: #0c0c0c;
+  --raised: #161616;
+  --ink: #ffffff;
+  --ink-soft: #a3a3a3;
+  --rule: rgba(255, 255, 255, 0.14);
+  --rule-soft: rgba(255, 255, 255, 0.08);
+  --brand: #c00000;
+  --brand-rule: #b40000;
+  --brand-tint: rgba(192, 0, 0, 0.18);
+  --brand-glow: rgba(192, 0, 0, 0.3);
+  --ok: #22c55e;
+  --warn: #eab308;
+  --warn-rule: rgba(234, 179, 8, 0.4);
+  --warn-tint: rgba(234, 179, 8, 0.07);
+  --ground-veil: rgba(0, 0, 0, 0.86);
+  --serif: "Fraunces Variable", Fraunces, Georgia, serif;
+  --sans: "IBM Plex Sans", system-ui, -apple-system, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, monospace;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --radius: 3px;
+}
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+  html,
+  body {
+    background: var(--ground);
+  }
+  body {
+    margin: 0;
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.6;
+    letter-spacing: -0.006em;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+    margin: 0;
+  }
+  p {
+    margin: 0;
+  }
+  a {
+    color: inherit;
+  }
+  :focus-visible {
+    outline: 2px solid var(--brand);
+    outline-offset: 2px;
+  }
+  ::selection {
+    background: var(--brand);
+    color: var(--ink);
+  }
+}
+
+/* Numbers are mono with tabular figures everywhere. */
+.num {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums lining-nums;
+  letter-spacing: -0.02em;
+}
+
+/* Screen change: 350ms fade. */
+.enter {
+  animation: fade 0.35s var(--ease);
+}
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}

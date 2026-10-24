@@ -412,7 +412,18 @@ DashboardEvent
 
 ## Frontend
 
-- **/operator:** three columns. **Queue** cards show a priority pill (red at 80+, amber 50–79, slate below 50), band chip, NEW INFO badge with reasons, language, channel and role chips, and T+. **Map** (Leaflet, OpenStreetMap tiles) shows incidents colored by severity and sized by call count. **Incident panel** shows the header with T+ first call and T+ dispatch-ready, transfer banner, consensus bars with every value's share and source counts, contradictions, calls with "Why linked?", Confirm and Split, the ask-next panel, and the dispatch package.
+**Flow:** Landing → Sign in (or continue as guest) → Onboarding → Console.
+
+| Route | Screen |
+|---|---|
+| `/` | Landing page: the problem, how it works, the six novelties, Massachusetts specifics, limitations |
+| `/signin` | Sign in with a name (kept in this browser only, no accounts) or continue as a guest. Guests get every feature |
+| `/welcome` | Three-step onboarding, shown once per person; replay it from the console header |
+| `/operator`, `/officer`, `/sim` | The console (`/operator` is the default) |
+
+**Look:** the Nexus911 logo palette (black ground, one crimson `#C00000`, white type) with Fraunces, IBM Plex Sans and IBM Plex Mono, bundled with the app so the demo works offline. The rules are in [`.kiro/steering/style-guide.md`](.kiro/steering/style-guide.md); the design package (clickable mock, visual style guide, screen copy in `V2_SCREENS.md`) is in [`design/`](design/).
+
+- **/operator:** three columns. **Queue** cards show a priority pill (crimson at 80+, yellow outline 50–79, grey below 50, always with the number), band chip, NEW INFO badge with reasons, language, channel and role chips, and T+. **Map** (Leaflet, OpenStreetMap tiles) shows incidents colored by severity and sized by call count. **Incident panel** shows the header with T+ first call and T+ dispatch-ready, transfer banner, consensus bars with every value's share and source counts, contradictions, calls with "Why linked?", Confirm and Split, the ask-next panel, and the dispatch package.
 - **/officer:** incident list, three-line briefing (known, disputed, open), dispatch package, and a leads board (suggested → open → assigned → cleared).
 - **/sim:** scenario picker, speed, Start, Stop and Reset, mass-event toggle, threshold sliders with Apply & Replay, and a metrics panel. Stretch: caller chat and agent panel.
 - **Data flow:** `useDashboardSocket` listens on `/ws/dashboard` and triggers refetches through a small Zustand store. `VITE_USE_MOCKS=true` serves fixtures from `src/mocks/`, so the UI can be built before the backend exists.
@@ -433,7 +444,7 @@ Rules: temperature 0, structured output only through a forced tool, every output
 ```
 nexus911/
 ├── .kiro/
-│   ├── steering/              product.md · tech.md · structure.md · spec-rules.md
+│   ├── steering/              product.md · tech.md · structure.md · spec-rules.md · style-guide.md
 │   └── specs/                 core-pipeline/ · api-llm-realtime/ · console-ui/
 ├── backend/
 │   ├── app/
@@ -449,6 +460,7 @@ nexus911/
 │   │   └── sim/               replay.py
 │   ├── tests/
 │   └── requirements.txt
+├── design/                    design package: mock, style guide, screen copy (V2_SCREENS.md)
 ├── frontend/                  Vite + React + TypeScript + Tailwind + Leaflet + Zustand
 │   └── src/                   api/ · mocks/ · hooks/ · components/ · pages/ · store.ts
 ├── data/
