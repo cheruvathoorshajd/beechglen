@@ -34,7 +34,7 @@
     {
       "id": "c03",
       "t_offset_s": 70,
-      "transcript": "I'm near the store at Mass Ave and Boylston. A man just ran out of the store. He was wearing a black jacket.",
+      "transcript": "I'm near the store at Mass Ave and Boylston. The man who robbed the store just ran out. He was wearing a black jacket.",
       "channel": "voice",
       "caller_hash": "rep-1",
       "caller_role_hint": "bystander",

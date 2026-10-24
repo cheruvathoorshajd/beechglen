@@ -1,11 +1,11 @@
 {
-  "transcript": "I'm near the store at Mass Ave and Boylston. A man just ran out of the store. He was wearing a black jacket.",
+  "transcript": "I'm near the store at Mass Ave and Boylston. The man who robbed the store just ran out. He was wearing a black jacket.",
   "channel": "voice",
   "model": "claude-sonnet-5-5",
   "extraction": {
     "language": "en",
-    "incident_type": "other",
-    "caller_role": "witness",
+    "incident_type": "robbery",
+    "caller_role": "bystander",
     "flags": {
       "weapon_present": false,
       "injuries_reported": false,
@@ -18,7 +18,7 @@
       "street": "Mass Ave",
       "cross_street": "Boylston",
       "town": null,
-      "landmark": null,
+      "landmark": "the store",
       "highway_route": null,
       "highway_direction": null,
       "highway_exit": null,
@@ -47,11 +47,11 @@
         "subject": "suspect",
         "attribute": "sex",
         "value": "male",
-        "quote": "A man just ran out of the store",
+        "quote": "The man who robbed the store",
         "first_hand": true,
-        "confidence": 0.8
+        "confidence": 0.85
       }
     ],
-    "summary": "Caller near store at Mass Ave and Boylston reports a man in a black jacket just ran out of the store."
+    "summary": "Caller near store at Mass Ave and Boylston reports robber in black jacket just ran out."
   }
 }

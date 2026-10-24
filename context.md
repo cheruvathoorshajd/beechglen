@@ -29,6 +29,15 @@ The terminal tool times out on slow commands and garbles long or multi-line ones
 - Never print `.env`. Skip docker commands.
 - If a command fails twice, change approach or ask the user. Don't loop.
 
+### Waiting rules (added after stage 7 attempt 1)
+
+- Prefer foreground commands that finish in under a minute and print a short result, no log file:
+  `.venv/bin/python -m pytest -q backend/tests/test_scenarios.py 2>&1 | tail -n 25`
+- Use a log file only for long jobs (npm install, servers, precompute). End the job with `echo "exit=$?" >> .kiro/logs/X.txt`, then wait with this one line (rerun if not finished):
+  `for i in $(seq 1 24); do grep -q '^exit=' .kiro/logs/X.txt && break; echo "waiting $i"; sleep 5; done; tail -n 30 .kiro/logs/X.txt`
+- Never run a bare sleep, and never read a log that doesn't contain the exit marker yet.
+- test_scenarios.py and evaluate.py drive the flow directly on the simulated clock (no real sleeps); each run finishes in seconds.
+
 ## Environment
 
 - Repo root: `/Users/kaushikj/Desktop/beechglen` (branch `main`, remote `origin`). Commit locally after each stage; never push.
