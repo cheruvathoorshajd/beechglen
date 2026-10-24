@@ -10,8 +10,10 @@ from datetime import datetime, timedelta, timezone
 
 import pytest
 
+from fakes import FakeExtractor, claim
+
 from app.context import AppContext
-from app.contracts import CallIn, ExtractedClaim, Extraction, Flags, LocationMention
+from app.contracts import CallIn, Flags, LocationMention
 from app.flow.runner import LinkActionError
 from app.graph.store import RelKind
 
@@ -24,24 +26,6 @@ WESTLAND = (42.3446, -71.0880)
 DOWNTOWN = (42.3555, -71.0605)
 BROOKLINE = (42.3326, -71.1166)
 EXIT_63 = (42.1730, -72.3280)
-
-
-def claim(subject, attribute, value, quote, first_hand=True):
-    return ExtractedClaim(subject=subject, attribute=attribute, value=value, quote=quote, first_hand=first_hand)
-
-
-class FakeExtractor:
-    """Maps a transcript to a prepared extraction; unknown transcripts raise."""
-
-    def __init__(self):
-        self.by_transcript: dict[str, Extraction] = {}
-
-    def add(self, transcript: str, **fields) -> str:
-        self.by_transcript[transcript] = Extraction(**fields)
-        return transcript
-
-    def __call__(self, call: CallIn) -> Extraction:
-        return self.by_transcript[call.transcript]
 
 
 def call(transcript, t0, seconds, *, caller, device=None, psap="boston-ecc", transferred_from=None):

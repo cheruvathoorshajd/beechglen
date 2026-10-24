@@ -90,7 +90,7 @@ scripts, scenarios, cache, frontend, Dockerfile, tests).
 - [x] Stage 3: `pipeline/weigh.py`, `priority.py`, `dispatch.py` + tests (A-5..A-7)
 - [x] Stage 4: `llm/prompts.py` (Appendix A-D verbatim), `pipeline/extract.py`, `pipeline/verify.py` + tests (B-1..B-3)
 - [x] Stage 5: `flow/`, `context.py`, `graph/views.py`, store additions + flow test (A-8)
-- [ ] Stage 6: `realtime/bus.py`, `api/routes_*.py`, `main.py`, `run.py`, `llm/assist.py` (ask-next, briefing), `sim/replay.py` + API tests (B-4..B-7)
+- [x] Stage 6: `realtime/bus.py`, `api/routes_*.py`, `main.py`, `run.py`, `llm/assist.py` (ask-next, briefing), `sim/replay.py` + API tests (B-4..B-7)
 - [ ] Stage 7: `scripts/precompute_extractions.py`, `scripts/evaluate.py`; run precompute (I2); `test_scenarios.py` (I4); evaluation table in README (P1)
 - [ ] Stage 8: frontend (0.6, 0.7, C-1..C-7, I3, P2) + build + smoke tests + mock/contract check
 - [ ] Stage 9: Dockerfile and .dockerignore (C-8). Deploy (P3) is left to the user.
@@ -113,6 +113,8 @@ scripts, scenarios, cache, frontend, Dockerfile, tests).
 
 - Stage 5: full suite → `.kiro/logs/pytest-stage5.txt` = 139 passed (adds test_flow: duplicates, new weapon, fire gate, split, ambiguous suggest + confirm, Pike exits/transfer/injury, fail-open extraction, reset).
 
+- Stage 6: full suite → `.kiro/logs/pytest-stage6b.txt` = 150 passed, 0 warnings (adds test_api: every README endpoint in OpenAPI, WebSocket event, ask-next/briefing fallbacks, confirm/split 409/404, leads, settings validation, metrics, audit, replay + reset, SPA fallback). Live smoke: `nohup .venv/bin/python run.py > .kiro/logs/server.txt 2>&1 &` → `/openapi.json` 200, `/docs` 200, `/api/queue` 200 (`.kiro/logs/smoke.txt`); server stopped afterwards.
+
 ## Module interfaces built so far
 
 - `pipeline.extract`: `Extractor(tool_caller=None, settings=get_settings, cache_dir=EXTRACTION_CACHE_DIR)`; `extractor(call) -> Extraction` (role hint applied), `.extract_raw(call)`, `.precompute(call) -> "cached"|"extracted"|"failed"`; module `extract(call)`. Cache file JSON = `{transcript, channel, model, extraction}`.
@@ -128,6 +130,12 @@ scripts, scenarios, cache, frontend, Dockerfile, tests).
 - `graph.views.GraphViews`: `queue()`, `incidents()`, `incident_detail(id)`, `call_detail(id)`, `explain(call_id)`, `metrics()`, `create_lead(...)` (status open, audited officer), `update_lead(...)`; raise `NotFoundError` (→ 404).
 - Store: ids come from a per-store `IdGenerator` (`store.new_id(kind)`): `c-0001`, `inc-0001`, `clm-0001`, `lead-0001`; reset restarts them. Audit ids `aud-0001`.
 - Audit actions: `link.decided` (system), `priority.override` (system), `link.confirmed` / `link.split` (operator), `lead.created` / `lead.updated` (officer).
+- `AppContext` also owns `.bus` (EventBus), `.assist` (AssistService), `.replay` (ReplayController); `create(..., tool_caller=None, scenario_dir=SCENARIO_DIR)`. `reset()` stops the replay before taking the lock (its thread may hold/await the lock).
+- `realtime.bus`: `EventBus.publish(type, payload)` thread-safe via `call_soon_threadsafe`; `/ws/dashboard` subscribes before accept; `call_processed_payload(result, **extra)` includes `override_reasons` (for NEW INFO toasts). `recent()` keeps the last 200 events (tests).
+- `llm.assist.AssistService`: `ask_next(CallDetail, IncidentDetail)`, `briefing(IncidentDetail)`; cache keys include incident last_seen and timeline length; questions naming a contested value are dropped; template adds "Are you safe right now?" first for victims.
+- `sim.replay`: `load_scenario(id)`, `ReplayController.start(id, speed)/stop()/reset()/status()/sim_time()/join()`; scenario ids must match `^[a-z0-9_]{1,64}$` (no path traversal).
+- `main.create_app(context_factory=None, frontend_dist=FRONTEND_DIST_DIR)`; module `app = create_app()`. Errors: NotFoundError/ScenarioNotFound → 404, LinkActionError → 409, settings validation → 422.
+- Events published: `call.processed` (API + replay), `link.changed` (confirm/split), `lead.updated`, `settings.updated`, `sim.status` (start, every call, stop, end, reset), `incident.updated` `{reset: true}` on reset.
 
 ## Scenario data notes
 
@@ -139,4 +147,4 @@ scripts, scenarios, cache, frontend, Dockerfile, tests).
 
 ## Next step
 
-Stage 6: transport. `realtime/bus.py` (thread-safe EventBus + `/ws/dashboard` router), `llm/assist.py` (ask-next and briefing: Claude via CLAUDE_MODEL_FAST, cache keyed by (id, incident last_seen), Appendix B/C template fallbacks, missing rules, plain labels), `sim/replay.py` (simulated clock thread), `api/routes_calls.py`, `routes_incidents.py`, `routes_links.py`, `routes_leads.py`, `routes_settings.py` (settings, metrics, audit), `routes_sim.py` (start, stop, reset), `main.py` (lifespan builds AppContext, CORS, SPA fallback), `run.py`; extend AppContext with bus, assist, replay. Then `test_api.py` (TestClient, fake extractor) and a background `run.py` smoke check against `/docs`.
+Stage 7: `scripts/precompute_extractions.py` (fills `data/cache/extractions/` for every scenario call via `Extractor.precompute`, skipping cached ones; needs the API key) and `scripts/evaluate.py` (replays every scenario in-process, cache only, prints the README metrics as a markdown table). Run precompute in the background with a log (real Claude calls, 28 transcripts). Then `test_scenarios.py` (I4 assertions, offline) and paste the evaluate table into README "Evaluation" (P1).

@@ -22,7 +22,7 @@ from typing import Any
 
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 
-from app.contracts import DashboardEvent, EventType
+from app.contracts import DashboardEvent, EventType, ProcessResult
 
 logger = logging.getLogger(__name__)
 
@@ -82,6 +82,19 @@ class EventBus:
     def clear_history(self) -> None:
         with self._lock:
             self._history.clear()
+
+
+def call_processed_payload(result: ProcessResult, **extra: Any) -> dict[str, Any]:
+    """Payload of ``call.processed``: enough for a NEW INFO toast without a refetch."""
+    return {
+        "call_id": result.link.call_id,
+        "incident_id": result.incident_id,
+        "priority": result.queue_item.priority,
+        "band": result.link.band,
+        "new_info": result.queue_item.new_info,
+        "override_reasons": list(result.queue_item.override_reasons),
+        **extra,
+    }
 
 
 def _offer(queue: asyncio.Queue[str], message: str) -> None:
