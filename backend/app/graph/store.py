@@ -22,6 +22,7 @@ from typing import Iterable
 import networkx as nx
 
 from app.contracts import (
+    AttributeConsensus,
     CallIn,
     Claim,
     Contradiction,
@@ -121,6 +122,7 @@ class StoredIncident:
     dispatch_ready_at: datetime | None = None
     timeline: list[TimelineEntry] = field(default_factory=list)
     contradictions: list[Contradiction] = field(default_factory=list)
+    consensus: list[AttributeConsensus] = field(default_factory=list)
 
     @property
     def call_count(self) -> int:
@@ -146,6 +148,7 @@ class GraphStore:
         self._incidents: dict[str, StoredIncident] = {}
         self._claims: dict[str, Claim] = {}
         self._leads: dict[str, Lead] = {}
+        self._lead_keys: dict[tuple[str, str], str] = {}
         self._transfers: list[TransferRecord] = []
 
     # -- lifecycle ----------------------------------------------------------
@@ -158,6 +161,7 @@ class GraphStore:
             self._incidents.clear()
             self._claims.clear()
             self._leads.clear()
+            self._lead_keys.clear()
             self._transfers.clear()
             reset_ids()
 
@@ -284,6 +288,24 @@ class GraphStore:
         with self._lock:
             self._graph.add_edge(claim_a, claim_b, key=RelKind.CONTRADICTS)
 
+    def replace_contradiction_edges(self, claim_ids: Iterable[str], pairs: Iterable[tuple[str, str]]) -> None:
+        """Drop ``CONTRADICTS`` edges touching ``claim_ids`` and add ``pairs``.
+
+        Called whenever an incident is re-weighed, so a split never leaves a
+        contradiction edge between claims that now belong to different incidents.
+        """
+        with self._lock:
+            scope = set(claim_ids)
+            stale = [
+                (u, v)
+                for u, v, key in self._graph.edges(keys=True)
+                if key == RelKind.CONTRADICTS and (u in scope or v in scope)
+            ]
+            for u, v in stale:
+                self._graph.remove_edge(u, v, key=RelKind.CONTRADICTS)
+            for a, b in pairs:
+                self._graph.add_edge(a, b, key=RelKind.CONTRADICTS)
+
     def contradiction_pairs(self) -> list[tuple[str, str]]:
         with self._lock:
             return [
@@ -387,13 +409,23 @@ class GraphStore:
         incident_type: IncidentType,
         severity: float,
         flags: Flags,
+        first_seen: datetime | None = None,
+        last_seen: datetime | None = None,
+        location: ResolvedLocation | None = None,
     ) -> None:
-        """Replace the rolled-up header outright (used after a split)."""
+        """Replace the rolled-up header outright (recomputed from the calls)."""
         with self._lock:
             incident = self.require_incident(incident_id)
             incident.type = incident_type
             incident.severity = severity
             incident.flags = flags
+            if first_seen is not None:
+                incident.first_seen = first_seen
+            if last_seen is not None:
+                incident.last_seen = last_seen
+            if location is not None and location != incident.location:
+                incident.location = location
+                self._attach_location(incident_id, location)
 
     def set_dispatch(
         self,
@@ -401,18 +433,37 @@ class GraphStore:
         package: DispatchPackage,
         *,
         ready_at: datetime | None = None,
-    ) -> None:
+    ) -> bool:
+        """Store the package and its ``ROUTED_TO`` edges.
+
+        Returns True when this call made the incident dispatch-ready for the
+        first time.
+        """
         with self._lock:
             incident = self.require_incident(incident_id)
             incident.dispatch = package
-            if ready_at is not None and incident.dispatch_ready_at is None:
+            became_ready = ready_at is not None and incident.dispatch_ready_at is None
+            if became_ready:
                 incident.dispatch_ready_at = ready_at
+            stale = [
+                (u, v)
+                for u, v, key in self._graph.out_edges(incident_id, keys=True)
+                if key == RelKind.ROUTED_TO
+            ]
+            for u, v in stale:
+                self._graph.remove_edge(u, v, key=RelKind.ROUTED_TO)
+            incident.agency_ids = []
             for agency in package.agencies:
                 self.route_to_agency(incident_id, agency)
+            return became_ready
 
     def set_contradictions(self, incident_id: str, contradictions: list[Contradiction]) -> None:
         with self._lock:
             self.require_incident(incident_id).contradictions = list(contradictions)
+
+    def set_consensus(self, incident_id: str, consensus: list[AttributeConsensus]) -> None:
+        with self._lock:
+            self.require_incident(incident_id).consensus = list(consensus)
 
     def append_timeline(self, incident_id: str, entry: TimelineEntry) -> None:
         with self._lock:
@@ -556,6 +607,46 @@ class GraphStore:
             self._leads[lead_id] = updated
             self._graph.nodes[lead_id]["record"] = updated
             return updated
+
+    def upsert_suggested_lead(
+        self,
+        incident_id: str,
+        key: str,
+        description: str,
+        source_claim_ids: list[str],
+    ) -> Lead:
+        """Create the suggested lead for ``key``, or refresh it while it is
+        still only a suggestion. Accepted leads are never changed by the system."""
+        with self._lock:
+            lead_id = self._lead_keys.get((incident_id, key))
+            if lead_id is None or lead_id not in self._leads:
+                lead = self.add_lead(incident_id, description, source_claim_ids, status="suggested")
+                self._lead_keys[(incident_id, key)] = lead.id
+                return lead
+            lead = self._leads[lead_id]
+            if lead.status != "suggested":
+                return lead
+            if lead.description == description and lead.source_claim_ids == source_claim_ids:
+                return lead
+            updated = lead.model_copy(
+                update={"description": description, "source_claim_ids": list(source_claim_ids)}
+            )
+            self._leads[lead_id] = updated
+            self._graph.nodes[lead_id]["record"] = updated
+            for u, v in [
+                (u, v)
+                for u, v, k in self._graph.out_edges(lead_id, keys=True)
+                if k == RelKind.DERIVED_FROM
+            ]:
+                self._graph.remove_edge(u, v, key=RelKind.DERIVED_FROM)
+            for claim_id in updated.source_claim_ids:
+                if claim_id in self._claims:
+                    self._graph.add_edge(lead_id, claim_id, key=RelKind.DERIVED_FROM)
+            return updated
+
+    def get_lead(self, lead_id: str) -> Lead | None:
+        with self._lock:
+            return self._leads.get(lead_id)
 
     def leads_for_incident(self, incident_id: str) -> list[Lead]:
         with self._lock:
