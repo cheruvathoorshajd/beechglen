@@ -2,9 +2,9 @@
 
 **A claim-weighted knowledge graph for 911 that links duplicate calls, surfaces what's new, and keeps humans in control.**
 
-Hackathon: `<name>` · Focus: Massachusetts · Built with Kiro · FastAPI · Claude · React
+Hackathon: `Nexus911` · Focus: Massachusetts · Built with Kiro · FastAPI · Claude · React
 
-**Live demo:** `<Cloud Run URL>` · **Demo video:** `<link>` · **Team:** Dennis, Kaushik, Arvind
+ **Demo video:** `https://youtu.be/VHyKyrJE-pw` · **Team:** Dennis, Kaushik, Arvind
 
 ---
 
