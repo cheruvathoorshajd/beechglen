@@ -29,19 +29,19 @@ The terminal tool times out on slow commands and garbles long or multi-line ones
 - Never print `.env`. Skip docker commands.
 - If a command fails twice, change approach or ask the user. Don't loop.
 
-### Waiting rules (added after stage 7 attempt 1)
+### Waiting rules (replace all earlier waiting rules)
 
-- Prefer foreground commands that finish in under a minute and print a short result, no log file:
-  `.venv/bin/python -m pytest -q backend/tests/test_scenarios.py 2>&1 | tail -n 25`
-- Use a log file only for long jobs (npm install, servers, precompute). End the job with `echo "exit=$?" >> .kiro/logs/X.txt`, then wait with this one line (rerun if not finished):
-  `for i in $(seq 1 24); do grep -q '^exit=' .kiro/logs/X.txt && break; echo "waiting $i"; sleep 5; done; tail -n 30 .kiro/logs/X.txt`
-- Never run a bare sleep, and never read a log that doesn't contain the exit marker yet.
-- test_scenarios.py and evaluate.py drive the flow directly on the simulated clock (no real sleeps); each run finishes in seconds.
-- Never pipe a long run through `tail` (it holds output until exit and the tool returns first). Run long jobs in the background with an exit marker:
+The loop guard counts partial or non-zero results as failures: `sleep` outlasts the tool's wait, and `grep` exits 1 when it finds nothing. Seven in a row stop the session.
+
+- Start every command with `cd /Users/kaushikj/Desktop/beechglen &&`. One tool call at a time.
+- Never use `sleep`, and never wait inside a command.
+- Run builds, tests and scripts in the background with the exit marker, e.g.
   `(.venv/bin/python -m pytest -q --durations=10 > .kiro/logs/pytest-full.txt 2>&1; echo "exit=$?" >> .kiro/logs/pytest-full.txt) &`
-  then poll with the wait line above (pointed at that log).
-- If the marker hasn't appeared after two polls, the suite is hanging: run test files one at a time in the foreground (`.venv/bin/python -m pytest -q -x backend/tests/<file>`) to find the stuck file, then fix it.
-- Don't start a job and poll for it in the same parallel tool batch; start first, poll in the next call.
+- Check a background job with one instant line that always succeeds:
+  `cd /Users/kaushikj/Desktop/beechglen && if grep -q '^exit=' .kiro/logs/X.txt; then grep -E "error|×|FAIL|Test Files|Tests |exit=|built in" .kiro/logs/X.txt | tail -n 20; else echo "still running"; fi; true`
+- If it says "still running", do a file task (e.g. update context.md) before checking again. Never check twice in a row.
+- End every command that might find nothing (grep, find, diff) with `; true`.
+- test_scenarios.py and evaluate.py drive the flow directly on the simulated clock (no real sleeps); each run finishes in seconds.
 
 ## Environment
 
@@ -93,7 +93,7 @@ Stage 8 (frontend) follows `KIRO_DESIGN_PROMPTS.md` section 2. Sources: `.kiro/s
 - [x] D2 Console: every C1 task (data layer, mocks, shell, queue + map, incident panel + Why linked, ask-next + dispatch, officer, sim) built in the "Console mapping" style; Wordmark in the top bar; Vitest for priority pill thresholds and the Critical badge word.
 - [x] D3 Landing at `/` (V2_SCREENS.md); console default `/operator`; CTAs go to `/operator` until D4.
 - [x] D4 Session module, route guard, sign-in, console header (who chip, Replay intro, Sign out); Vitest for session.ts (incl. throwing storage), guard redirects, name validation.
-- [ ] D5 Onboarding wizard; Vitest for Escape skipping, focus to each heading, server-down state.
+- [x] D5 Onboarding wizard; Vitest for Escape skipping, focus to each heading, server-down state.
 - [ ] D6 Verify: backend suite, build, Vitest (background, exit marker); grep hex/rgb/rgba/Tailwind color utilities outside token files; contrast table; README + context.md; browser checklist.
 
 ### Where it stands
@@ -109,7 +109,8 @@ Stage 8 (frontend) follows `KIRO_DESIGN_PROMPTS.md` section 2. Sources: `.kiro/s
   - `/` redirects to `/operator` until D3. Verify: `.kiro/logs/fe-d2.txt` build ✓, Vitest 17/17 (priority thresholds, Critical word, three pages render from mocks with the map stubbed).
 - D3 done: `src/landing/Landing.tsx` + `landing.css` (mock CSS ported; flow is 7 columns → 4 at 980 → 2 at 760 → 1 at 560; table scrolls in `.tbl-wrap`; `.lp { overflow-x: clip }`). Every section is plain markup (no scroll animations). CTAs come from `src/landing/targets.ts` `useStartTargets()`, which returns `/operator` for everything until D4. Colophon: "Built for the hackathon" (README's hackathon name is still a placeholder; `HACKATHON` constant in Landing.tsx) and the GitHub README link. `/` is the landing; console default is `/operator`. Verify: `.kiro/logs/fe-d3.txt` build ✓, Vitest 21/21.
 - D4 done: `src/auth/session.ts` (V2_SCREENS.md exports plus `validateName`, `NAME_EMPTY`/`NAME_INVALID`, `useSessionVersion`; storage wrapped in try/catch with an in-memory fallback, so private mode still works), `src/auth/guards.tsx` (`RequireConsole`, `RequireSession`, `SignedOutOnly`, `signOut()`; sign-out navigates to `/` first and the console guard renders nothing while signing out, else it raced to `/signin`), `src/auth/SignIn.tsx` + `auth.css`, `src/auth/SessionControls.tsx` (who chip, Replay intro, Sign out in the TopBar), `src/landing/targets.ts` now session-aware (Get started/Sign in → /signin; with a session "Open the console" → /operator, Run the demo → /welcome; guest card sets a guest session). `src/onboarding/Onboarding.tsx` is a placeholder until D5. Verify: `.kiro/logs/fe-d4b.txt` build ✓, Vitest 45/45 (session incl. throwing storage, guard redirects, name validation, sign-in errors + focus, header controls).
-- Next: D5 onboarding wizard.
+- D5 done: `src/onboarding/Onboarding.tsx` + `onboarding.css` + `onboarding.test.tsx`. Fixed full-screen dialog (role dialog, aria-modal), 280px rail, 2px progress bar, bloom, footer Back · Skip intro · Continue. Step id mirrored in sessionStorage `nexus911:onboarding-step`; focus moves to each step's h1; `useFocusTrap` keeps Tab inside and Escape = Skip; step 3 cards are a radiogroup with arrow keys; `GET /api/metrics` with a 4 s timeout decides server up/down (down: alert + Try again, demo disabled, console selected); the demo does `POST /api/reset` then `POST /api/simulation/start` `{mass_ave_robbery, speed}` with a spinner, "already running" counts as success, failure shows an alert with "Open the console instead". Finish (any path) = markOnboarded, clear step, go to /operator. Verify: `.kiro/logs/fe-d5.txt` build ✓, Vitest 51/51, no warnings.
+- Next: D6 verify (backend suite, build, Vitest, color grep, contrast table, served-route curl check, README + context.md, browser checklist), then stage 9 Dockerfile.
 
 ## Build state
 
