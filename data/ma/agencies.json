@@ -15,5 +15,12 @@
     { "id": "boston-ems", "name": "Boston EMS", "kind": "ems", "town": "Boston" },
     { "id": "local-fire", "name": "Local Fire Department", "kind": "fire", "town": null },
     { "id": "local-ems", "name": "Local EMS", "kind": "ems", "town": null }
-  ]
+  ],
+  "_psap_comment": "Town served by each answering point. Used only when an incident has no resolved town, so local police are still routed (a call that reached the Boston center is most likely in Boston).",
+  "psap_towns": {
+    "boston-ecc": "Boston",
+    "brookline-local": "Brookline",
+    "palmer-local": "Palmer",
+    "msp-pike": null
+  }
 }

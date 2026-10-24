@@ -370,9 +370,18 @@ class LandmarkTable:
 class AgencyTable:
     """Agency directory with town and kind lookups."""
 
-    def __init__(self, agencies: list[AgencyEntry]) -> None:
+    def __init__(
+        self,
+        agencies: list[AgencyEntry],
+        psap_towns: dict[str, str | None] | None = None,
+    ) -> None:
         self._agencies = tuple(agencies)
         self._by_id = {entry.id: entry for entry in self._agencies}
+        self._psap_towns = dict(psap_towns or {})
+
+    def town_for_psap(self, psap_id: str | None) -> str | None:
+        """Town an answering point serves, if it serves a single town."""
+        return self._psap_towns.get(psap_id) if psap_id else None
 
     def get(self, agency_id: str | None) -> AgencyEntry | None:
         return self._by_id.get(agency_id) if agency_id else None
@@ -540,7 +549,7 @@ def reference_data() -> ReferenceData:
             direction_aliases=highways_payload.get("direction_aliases", {}),
         ),
         landmarks=LandmarkTable(landmarks),
-        agencies=AgencyTable(agencies),
+        agencies=AgencyTable(agencies, agencies_payload.get("psap_towns", {})),
         dispatch_rules=DispatchRuleSet(rules),
         _sources=(GAZETTEER_FILE, HIGHWAYS_FILE, LANDMARKS_FILE, AGENCIES_FILE, DISPATCH_RULES_FILE),
     )

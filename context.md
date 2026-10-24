@@ -55,6 +55,8 @@ The terminal tool times out on slow commands and garbles long or multi-line ones
 | D12 | Scenario JSON is authored directly from the 0.3 prompt (rules followed exactly). The extraction cache is precomputed with the real API, then checked by scenario tests; clearly wrong cache entries may be fixed by hand (playbook I2). | Playbook 0.3 and I2. |
 | D13 | Frontend scaffolded by writing files (create-vite prompts interactively): React 18, react-leaflet 4, Leaflet 1.9, Tailwind 3, Zustand, react-router-dom 6, Vite. Smoke tests with vitest + testing-library (dev dependencies only). | tech.md stack; no interactive prompts. |
 | D14 | `llm/client.py` `model_profile()` picks request settings per model. Sonnet 5.5: `tool_choice auto` + `strict: true` + `thinking between_tools`, no temperature. Haiku 5.5: forced tool, no temperature. 4.x models: forced tool + temperature 0. All tools are sent `strict: true`; `llm/schema.tool_schema()` makes schemas strict-compatible (refs inlined, all properties required, `additionalProperties: false`, no min/max/default). | Anthropic Sonnet 5.5 and Haiku 5.5 migration guides: 5.x models reject temperature; Sonnet 5.5 rejects forced tool_choice; strict mode allows at most 24 optional params. |
+| D16 | Dispatch: field names are `location`, `type`, `injuries`, `weapons`, `hazard`, `trapped`, then `<subject>.<attribute>` (frontend prettifies). `type` confidence = share of non-provisional calls reporting the incident type. Agencies: police (highway → State Police, landmark agency_hint, else town PD), plus fire/EMS by type, flags or units text. When the incident has no town, `agencies.json` `psap_towns` supplies the PSAP's town. Leads have stable keys (`plate:<v>`, `vehicle:<subject>`, `direction_of_travel:<subject>`, `suspect_location:<subject>`) so a suggested lead is updated, not duplicated. | README leaves these open; keeps routing total. |
+| D17 | Overrides: `new_weapon` if a weapon value is unseen or the weapon flag is new; `new_injury` if the call reports any injury and the incident had none; `injury_increase` only when the incident already had a count; `new_hazard` per category (fire/smoke, trapped). A call that creates an incident gets only `new_incident` (no floor). | README "6. Prioritize". |
 | D15 | Gazetteer fixes found while testing: phrase aliases match whole words after suffix expansion ("Massachusetts Avenue" used to become "massachusetts avenuenue"); suffix-less names ("Boylston") match "boylston street"; route aliases match whole words ("I-290" no longer maps to I-90); exit text like "exit 63" parses; landmark aliases match whole words and the raw location text is scanned only when no street or landmark was extracted ("ran toward Hynes" no longer relocates a store call to the station). | Each one broke a demo scenario path. |
 
 ## Build state
@@ -85,7 +87,7 @@ scripts, scenarios, cache, frontend, Dockerfile, tests).
 - [x] Stage 0: fresh venv + deps, `.kiro/logs/` ignored, `.env.example`, context.md, steering pointer
 - [x] Stage 1: review fixes R1, R3, R4 (sanitizer), R5, R7 + tests for locate, link, client, sanitizer
 - [x] Stage 2: scenario data `data/scenarios/{mass_ave_robbery,pike_crash,washington_st}.json` (playbook 0.3); rules locked by `test_scenario_data.py`
-- [ ] Stage 3: `pipeline/weigh.py`, `priority.py`, `dispatch.py` + tests (A-5..A-7)
+- [x] Stage 3: `pipeline/weigh.py`, `priority.py`, `dispatch.py` + tests (A-5..A-7)
 - [ ] Stage 4: `llm/prompts.py` (Appendix A-D verbatim), `pipeline/extract.py`, `pipeline/verify.py` + tests (B-1..B-3)
 - [ ] Stage 5: `flow/`, `context.py`, `graph/views.py`, store additions + flow test (A-8)
 - [ ] Stage 6: `realtime/bus.py`, `api/routes_*.py`, `main.py`, `run.py`, `llm/assist.py` (ask-next, briefing), `sim/replay.py` + API tests (B-4..B-7)
@@ -105,6 +107,8 @@ scripts, scenarios, cache, frontend, Dockerfile, tests).
 
 - Stage 2: 0.3 one-liner → `.kiro/logs/scenarios-check.txt` = ok (28 calls parse as CallIn); `test_scenario_data.py` → `.kiro/logs/pytest-stage2.txt` = 6 passed.
 
+- Stage 3: full suite → `.kiro/logs/pytest-stage3.txt` = 104 passed (adds test_weigh, test_priority, test_dispatch; README worked example 3/90/100 and 0.83/0.17 verified).
+
 ## Scenario data notes
 
 - 28 calls: robbery c01-c12 (A, plus B = c12), pike p01-p12 (C), washington w01-w04 (D, E). Every robbery caller except c10 and c12 names Mass Ave and Boylston; flight directions are separate sentences ("He ran toward Hynes station"). Pike SUV is always mentioned before the pickup, so extraction maps the SUV to subject `vehicle`. Device jitter stays within ±0.0003.
@@ -115,4 +119,4 @@ scripts, scenarios, cache, frontend, Dockerfile, tests).
 
 ## Next step
 
-Stage 3: `pipeline/weigh.py`, `pipeline/priority.py`, `pipeline/dispatch.py` as pure functions (README sections 5, 6, 7) with tests: weigh 7 white vs 3 black ≈ 0.83/0.17 not contested; priority worked-example rows (3, 90, 100); dispatch rules and routing.
+Stage 4: `llm/prompts.py` (Appendix A-D copied verbatim from KIRO_PROMPTS.md, tool schemas via `llm/schema.tool_schema` with subject/attribute enums), `pipeline/extract.py` (sha256 cache, cache_first/offline, caller_role_hint override, minimal fallback, `sanitize()`), `pipeline/verify.py` (exact → verified, ≥80% tokens → pending, else rejected) + test_extract.py, test_verify.py.
