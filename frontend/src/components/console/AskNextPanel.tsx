@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { api, errorMessage } from "../../api/client";
 import type { AskNext } from "../../api/types";
 import { SpecLabel } from "../../ui";
+import { TourHint } from "../../tour/FeatureTour";
 
 /** Ask-next for the selected call: a confirm line plus 2-3 open questions.
  *  The town question is highlighted when the caller's location is ambiguous. */
@@ -27,8 +28,11 @@ export function AskNextPanel({ callId, refreshKey }: { callId: string | null; re
   }, [callId, refreshKey]);
 
   return (
-    <section aria-labelledby="ask-h" className="grid gap-3 rounded border border-rule-soft bg-card p-4">
-      <SpecLabel as="h2" id="ask-h" k="Ask next" rest={callId ? [callId] : ["select a call"]} />
+    <section aria-labelledby="ask-h" className="grid gap-3 rounded border border-rule-soft bg-card p-4" data-tour="ask-next">
+      <div className="flex items-center">
+        <SpecLabel as="h2" id="ask-h" k="Ask next" rest={callId ? [callId] : ["select a call"]} />
+        <TourHint tour="operator" target="ask-next" label="ask next" />
+      </div>
       {!callId && <p className="text-[13.5px] text-ink-soft">Select a call to see what to ask the caller.</p>}
       {error && <p className="ferr" role="alert">{error}</p>}
       {callId && ask && (

@@ -19,7 +19,10 @@ export function TopBar({ extra }: { extra?: ReactNode }) {
   const connected = useConsole((s) => s.connected);
   const sim = useConsole((s) => s.simStatus);
   return (
-    <header className="flex flex-wrap items-center justify-between gap-3 border-b border-rule-soft bg-card px-4 py-3 md:px-6">
+    <header
+      className="flex flex-wrap items-center justify-between gap-3 border-b border-rule-soft bg-card px-4 py-3 md:px-6"
+      data-tour="topbar"
+    >
       <div className="flex flex-wrap items-center gap-5">
         <Wordmark to="/" />
         <nav aria-label="Console" className="flex gap-1">
@@ -94,7 +97,7 @@ export function MetricsPanel({ metrics }: { metrics: Metrics | null }) {
       ]
     : [];
   return (
-    <section aria-labelledby="metrics-h" className="grid gap-3">
+    <section aria-labelledby="metrics-h" className="grid gap-3" data-tour="metrics">
       <h2 id="metrics-h" className="font-serif text-[22px] font-medium tracking-[-0.01em]">
         Metrics
       </h2>

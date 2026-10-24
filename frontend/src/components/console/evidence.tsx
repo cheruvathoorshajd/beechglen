@@ -68,7 +68,7 @@ export function TransferBanner({ transfers }: { transfers: TransferRecord[] }) {
 /** Dispatch package: mono labels, value, share and sources; contested marked; neutral Illustrative badge. */
 export function DispatchPackageCard({ dispatch }: { dispatch: DispatchPackage }) {
   return (
-    <section aria-labelledby="dispatch-h" className="grid gap-3 rounded border border-rule-soft bg-card p-4">
+    <section aria-labelledby="dispatch-h" className="grid gap-3 rounded border border-rule-soft bg-card p-4" data-tour="dispatch">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <SpecLabel as="h2" id="dispatch-h" k="Dispatch package" rest={[dispatch.rule_id]} />
         {dispatch.illustrative && <Badge>Illustrative</Badge>}

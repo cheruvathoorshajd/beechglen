@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { SpecLabel } from "../ui";
+import { FeatureTour, TourHint } from "../tour/FeatureTour";
 import { useConsole, queueOrigin } from "../store";
 import { QueueCard } from "../components/console/QueueCard";
 import { IncidentMap } from "../components/console/IncidentMap";
@@ -29,9 +30,11 @@ export default function Operator() {
 
   return (
     <div className="grid h-full min-h-0 grid-cols-1 lg:grid-cols-[minmax(300px,360px)_minmax(0,1fr)_minmax(360px,460px)]">
-      <section aria-labelledby="queue-h" className="flex min-h-0 flex-col border-r border-rule-soft">
-        <div className="border-b border-rule-soft px-4 py-3">
+      <FeatureTour id="operator" />
+      <section aria-labelledby="queue-h" className="flex min-h-0 flex-col border-r border-rule-soft" data-tour="queue">
+        <div className="flex items-center border-b border-rule-soft px-4 py-3">
           <SpecLabel as="h2" id="queue-h" k="Queue" rest={[`${queue.length} calls`, "priority, then oldest"]} />
+          <TourHint tour="operator" target="queue" label="the call queue" />
         </div>
         <ol className="grid min-h-0 flex-1 content-start gap-2 overflow-y-auto p-3">
           {loaded && !queue.length && (
@@ -39,8 +42,8 @@ export default function Operator() {
               No calls yet. Start a scenario from Sim; calls appear here as they come in.
             </li>
           )}
-          {queue.map((item) => (
-            <li key={item.call_id}>
+          {queue.map((item, index) => (
+            <li key={item.call_id} data-tour={index === 0 ? "queue-card" : undefined}>
               <QueueCard
                 item={item}
                 origin={origin}
@@ -53,7 +56,7 @@ export default function Operator() {
         </ol>
       </section>
 
-      <section aria-label="Map" className="min-h-[320px] border-r border-rule-soft">
+      <section aria-label="Map" className="min-h-[320px] border-r border-rule-soft" data-tour="map">
         <IncidentMap incidents={incidents} selectedId={selectedIncidentId} onSelect={selectIncident} />
       </section>
 

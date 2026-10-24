@@ -22,6 +22,7 @@
   --warn-rule: rgba(234, 179, 8, 0.4);
   --warn-tint: rgba(234, 179, 8, 0.07);
   --ground-veil: rgba(0, 0, 0, 0.86);
+  --tour-veil: rgba(0, 0, 0, 0.62);
   --serif: "Fraunces Variable", Fraunces, Georgia, serif;
   --sans: "IBM Plex Sans", system-ui, -apple-system, sans-serif;
   --mono: "IBM Plex Mono", ui-monospace, monospace;

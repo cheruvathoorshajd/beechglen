@@ -3,6 +3,7 @@ import { api, errorMessage } from "../../api/client";
 import type { Briefing, Lead, LeadStatus } from "../../api/types";
 import { Badge, Button, SpecLabel } from "../../ui";
 import { useConsole } from "../../store";
+import { TourHint } from "../../tour/FeatureTour";
 
 /** Three-line officer briefing: KNOWN · DISPUTED · OPEN. */
 export function BriefingCard({ briefing }: { briefing: Briefing | null }) {
@@ -12,10 +13,13 @@ export function BriefingCard({ briefing }: { briefing: Briefing | null }) {
     ["Open", briefing?.open],
   ];
   return (
-    <section aria-labelledby="brief-h" className="grid gap-3 rounded border border-rule-soft bg-card p-4">
-      <h2 id="brief-h" className="font-serif text-[22px] font-medium tracking-[-0.01em]">
-        Briefing
-      </h2>
+    <section aria-labelledby="brief-h" className="grid gap-3 rounded border border-rule-soft bg-card p-4" data-tour="briefing">
+      <div className="flex items-center">
+        <h2 id="brief-h" className="font-serif text-[22px] font-medium tracking-[-0.01em]">
+          Briefing
+        </h2>
+        <TourHint tour="officer" target="briefing" label="the briefing" />
+      </div>
       <dl className="grid gap-3">
         {rows.map(([label, text]) => (
           <div key={label} className="grid gap-1 border-t border-rule-soft pt-3">
@@ -116,10 +120,13 @@ export function LeadsBoard({ incidentId, leads }: { incidentId: string; leads: L
   };
 
   return (
-    <section aria-labelledby="leads-h" className="grid gap-3">
-      <h2 id="leads-h" className="font-serif text-[22px] font-medium tracking-[-0.01em]">
-        Leads
-      </h2>
+    <section aria-labelledby="leads-h" className="grid gap-3" data-tour="leads">
+      <div className="flex items-center">
+        <h2 id="leads-h" className="font-serif text-[22px] font-medium tracking-[-0.01em]">
+          Leads
+        </h2>
+        <TourHint tour="officer" target="leads" label="the leads board" />
+      </div>
       <div className="grid gap-3 md:grid-cols-4">
         {COLUMNS.map((column) => {
           const items = leads.filter((lead) => lead.status === column.status);

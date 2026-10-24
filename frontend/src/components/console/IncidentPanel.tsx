@@ -7,6 +7,7 @@ import { useConsole } from "../../store";
 import { BandChip, CriticalBadge, NewInfoBadge, PriorityPill } from "./chips";
 import { ConsensusBars, Contradictions, TransferBanner } from "./evidence";
 import { WhyLinkedModal } from "./WhyLinkedModal";
+import { TourHint } from "../../tour/FeatureTour";
 
 export function IncidentHeader({ detail }: { detail: IncidentDetail }) {
   const { incident, location } = detail;
@@ -33,11 +34,13 @@ export function IncidentHeader({ detail }: { detail: IncidentDetail }) {
 
 function CallRow({
   item,
+  first = false,
   origin,
   canSplit,
   onWhy,
 }: {
   item: QueueItem;
+  first?: boolean;
   origin: string;
   canSplit: boolean;
   onWhy: () => void;
@@ -76,7 +79,7 @@ function CallRow({
           </span>
         </span>
       </button>
-      <div className="flex flex-wrap items-center gap-1.5">
+      <div className="flex flex-wrap items-center gap-1.5" data-tour={first ? "call-actions" : undefined}>
         <BandChip band={item.band} />
         {item.new_info && <NewInfoBadge reasons={item.override_reasons} />}
         <span className="flex-1" />
@@ -103,19 +106,28 @@ export function IncidentPanel({ detail }: { detail: IncidentDetail }) {
   const [why, setWhy] = useState<string | null>(null);
   return (
     <div className="grid gap-5">
-      <IncidentHeader detail={detail} />
+      <div data-tour="incident">
+        <IncidentHeader detail={detail} />
+      </div>
       <TransferBanner transfers={detail.transfers} />
-      <section aria-labelledby="consensus-h" className="grid gap-2">
-        <SpecLabel as="h2" id="consensus-h" k="What callers report" rest={["share · sources · first-hand"]} />
+      <section aria-labelledby="consensus-h" className="grid gap-2" data-tour="consensus">
+        <div className="flex items-center">
+          <SpecLabel as="h2" id="consensus-h" k="What callers report" rest={["share · sources · first-hand"]} />
+          <TourHint tour="operator" target="consensus" label="what callers report" />
+        </div>
         <ConsensusBars consensus={detail.consensus} />
       </section>
       <Contradictions items={detail.contradictions} />
-      <section aria-labelledby="calls-h" className="grid gap-1">
-        <SpecLabel as="h2" id="calls-h" k="Calls" rest={[String(detail.calls.length)]} />
+      <section aria-labelledby="calls-h" className="grid gap-1" data-tour="calls">
+        <div className="flex items-center">
+          <SpecLabel as="h2" id="calls-h" k="Calls" rest={[String(detail.calls.length)]} />
+          <TourHint tour="operator" target="calls" label="link bands" />
+        </div>
         <ul>
-          {detail.calls.map((item) => (
+          {detail.calls.map((item, index) => (
             <CallRow
               key={item.call_id}
+              first={index === 0}
               item={item}
               origin={detail.incident.first_seen}
               canSplit={detail.calls.length > 1}

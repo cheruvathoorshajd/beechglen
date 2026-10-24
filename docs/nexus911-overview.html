@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Nexus911 · Project overview</title>
+<style>
+  /* Self-contained: no external fonts, scripts or images, so it works offline. */
+  :root {
+    --ground: #000;
+    --card: #0c0c0c;
+    --raised: #161616;
+    --ink: #fff;
+    --ink-soft: #a3a3a3;
+    --rule: rgba(255, 255, 255, 0.14);
+    --rule-soft: rgba(255, 255, 255, 0.08);
+    --brand: #c00000;
+    --brand-tint: rgba(192, 0, 0, 0.18);
+    --ok: #22c55e;
+    --warn: #eab308;
+    --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: var(--ground); color: var(--ink); font-family: var(--sans); }
+  body { overflow: hidden; -webkit-font-smoothing: antialiased; }
+
+  .deck { position: relative; height: 100vh; width: 100vw; }
+  .slide {
+    position: absolute; inset: 0;
+    display: grid; grid-template-rows: auto 1fr auto; gap: 2.2vh;
+    padding: 5vh 5vw 4vh;
+    opacity: 0; visibility: hidden; transform: translateY(12px);
+    transition: opacity .35s cubic-bezier(.22,1,.36,1), transform .35s cubic-bezier(.22,1,.36,1), visibility 0s .35s;
+  }
+  .slide.on { opacity: 1; visibility: visible; transform: none; transition-delay: 0s; }
+  .slide::before {
+    content: ""; position: absolute; right: -18vw; top: -30vh; width: 60vw; height: 60vw; border-radius: 50%;
+    background: radial-gradient(circle, rgba(192,0,0,.22), transparent 62%); pointer-events: none;
+  }
+
+  .top { display: flex; justify-content: space-between; align-items: center; position: relative; }
+  .wordmark { font-family: var(--serif); font-size: 22px; letter-spacing: -.01em; }
+  .wordmark b { color: var(--brand); font-weight: 600; }
+  .spec { font-family: var(--mono); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-soft); }
+  .spec .k { color: var(--ink); }
+
+  h1 { font-family: var(--serif); font-weight: 500; font-size: clamp(30px, 4.4vw, 58px); line-height: 1.05; letter-spacing: -.02em; margin: 0 0 1.4vh; max-width: 26ch; text-wrap: balance; }
+  h2 { font-family: var(--serif); font-weight: 500; font-size: clamp(17px, 1.6vw, 22px); margin: 0 0 .8vh; letter-spacing: -.01em; }
+  p, li { font-size: clamp(13px, 1.12vw, 16px); line-height: 1.5; margin: 0; }
+  .lede { font-size: clamp(15px, 1.45vw, 20px); color: var(--ink); max-width: 62ch; }
+  .soft { color: var(--ink-soft); }
+  ul { margin: 0; padding: 0; list-style: none; display: grid; gap: .9vh; }
+  li { padding-left: 16px; position: relative; }
+  li::before { content: ""; position: absolute; left: 0; top: .62em; width: 6px; height: 1px; background: var(--ink-soft); }
+
+  .body { position: relative; min-height: 0; display: grid; align-content: start; gap: 2.4vh; }
+  .grid2 { display: grid; grid-template-columns: 1.1fr 1fr; gap: 2.4vw; }
+  .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.4vw; }
+  .card { background: var(--card); border: 1px solid var(--rule-soft); border-radius: 3px; padding: 2vh 1.3vw; display: grid; gap: .9vh; align-content: start; }
+  .card.brand { border-left: 3px solid var(--brand); }
+  .num { font-family: var(--mono); font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
+
+  .principle { border: 1px solid var(--rule); border-left: 3px solid var(--brand); padding: 1.6vh 1.2vw; background: var(--card); border-radius: 3px; }
+  .principle b { font-family: var(--serif); font-weight: 500; font-size: clamp(16px, 1.5vw, 21px); }
+
+  .flow { display: grid; grid-template-columns: repeat(7, 1fr); border-top: 1px solid var(--rule); }
+  .flow div { padding: 1.4vh .7vw 0 0; }
+  .flow .n { font-family: var(--mono); font-size: 11px; letter-spacing: .14em; color: var(--ink-soft); display: block; margin-bottom: .6vh; }
+  .flow b { font-family: var(--serif); font-weight: 500; font-size: clamp(15px, 1.35vw, 19px); display: block; margin-bottom: .4vh; }
+  .flow p { font-size: clamp(11.5px, .95vw, 14px); color: var(--ink-soft); }
+
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1vw; }
+  .stat { background: var(--card); border: 1px solid var(--rule-soft); border-radius: 3px; padding: 1.6vh 1vw; }
+  .stat .v { font-family: var(--serif); font-size: clamp(24px, 2.6vw, 38px); line-height: 1; letter-spacing: -.02em; display: block; margin-bottom: .7vh; }
+  .stat .l { font-family: var(--mono); font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-soft); }
+
+  .nov { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.2vh 1.6vw; }
+  .nov div { display: grid; grid-template-columns: 30px 1fr; gap: .6vw; }
+  .nov .i { font-family: var(--mono); font-size: 12px; color: var(--ink-soft); padding-top: 3px; }
+  .nov b { font-weight: 600; }
+
+  .foot { display: flex; justify-content: space-between; align-items: center; position: relative; }
+  .dots { display: flex; gap: 6px; }
+  .dots button { width: 34px; height: 3px; border: 0; padding: 0; background: var(--rule); cursor: pointer; }
+  .dots button[aria-current="true"] { background: var(--brand); }
+  .nav { display: flex; gap: 8px; }
+  .nav button {
+    font-family: var(--mono); font-size: 12px; letter-spacing: .1em; text-transform: uppercase;
+    background: transparent; color: var(--ink); border: 1px solid var(--rule); border-radius: 3px; padding: 8px 14px; cursor: pointer;
+  }
+  .nav button:hover:not(:disabled) { border-color: var(--ink-soft); }
+  .nav button:disabled { opacity: .35; cursor: default; }
+  :focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+
+  @media (max-width: 900px) {
+    body { overflow: auto; }
+    .slide { position: relative; opacity: 1; visibility: visible; transform: none; min-height: 100vh; }
+    .grid2, .grid3, .nov, .stats { grid-template-columns: 1fr; }
+    .flow { grid-template-columns: repeat(2, 1fr); }
+    .foot .nav, .foot .dots { display: none; }
+  }
+  @media print {
+    body { overflow: visible; }
+    .slide { position: relative; opacity: 1; visibility: visible; transform: none; height: 100vh; page-break-after: always; }
+    .nav, .dots { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) { .slide { transition: none; } }
+</style>
+</head>
+<body>
+<main class="deck" aria-roledescription="slide deck" aria-label="Nexus911 overview">
+
+  <!-- 1 · Problem and goal -->
+  <section class="slide on" aria-roledescription="slide" aria-label="1 of 3: Problem and goal">
+    <div class="top">
+      <span class="wordmark">Nexus<b>911</b></span>
+      <span class="spec"><span class="k">01</span> · Problem · Goal</span>
+    </div>
+    <div class="body">
+      <div>
+        <h1>One emergency, dozens of calls, and no way to tell which one is new.</h1>
+        <p class="lede">When dozens of people witness a crime or a crash, every caller is handled as a fresh emergency. Operators collect the same details again and again, conflicting accounts can't be weighed, and a new incident a block away waits behind the tenth duplicate.</p>
+      </div>
+      <div class="grid2">
+        <div class="card">
+          <h2>Why Massachusetts makes it harder</h2>
+          <ul>
+            <li><b>Fragmented dispatch:</b> calls are transferred between centers (highway calls go to State Police), and context is lost at each handoff.</li>
+            <li><b>Duplicate street names:</b> Washington St and Massachusetts Ave exist in many towns.</li>
+            <li><b>Two exit-number systems:</b> “old Exit 8” and “Exit 63” are the same place on the Pike.</li>
+            <li><b>Many languages and channels:</b> Spanish, Portuguese and more, plus short text-to-911 messages.</li>
+          </ul>
+        </div>
+        <div class="card brand">
+          <h2>The goal</h2>
+          <ul>
+            <li>Link calls about the same event into one incident, and explain why.</li>
+            <li>Raise calls that bring <b>new information</b> (a weapon, an injury, a new place) and lower pure repeats.</li>
+            <li>Weigh conflicting accounts by reliability, recency and independence, not by raw counts.</li>
+            <li>Give officers one trustworthy picture instead of a stream of repeats.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="principle">
+        <b>No call is ever dropped.</b>
+        <p class="soft">Nexus911 reorders and annotates the queue; it never hides a call. AI suggests, people decide, and every decision is logged.</p>
+      </div>
+    </div>
+    <div class="foot"></div>
+  </section>
+
+  <!-- 2 · How it works and features -->
+  <section class="slide" aria-roledescription="slide" aria-label="2 of 3: How it works and features">
+    <div class="top">
+      <span class="wordmark">Nexus<b>911</b></span>
+      <span class="spec"><span class="k">02</span> · How it works · Features</span>
+    </div>
+    <div class="body">
+      <div>
+        <h1>Every call becomes quote-grounded claims in a knowledge graph.</h1>
+        <p class="lede soft">Claude only extracts facts and writes short text. Linking, weighting, priority and dispatch are plain Python rules: testable, explainable and free to run. Two LangGraph graphs run the steps.</p>
+      </div>
+      <div class="flow" role="list" aria-label="Pipeline">
+        <div role="listitem"><span class="n">01</span><b>Extract</b><p>Claude turns the transcript into claims, each with a verbatim quote.</p></div>
+        <div role="listitem"><span class="n">02</span><b>Verify</b><p>A quote not found in the transcript is rejected.</p></div>
+        <div role="listitem"><span class="n">03</span><b>Locate</b><p>MA gazetteer, old and new exits, landmarks, device location.</p></div>
+        <div role="listitem"><span class="n">04</span><b>Link</b><p>P(same incident) → auto, suggest or new.</p></div>
+        <div role="listitem"><span class="n">05</span><b>Weigh</b><p>Consensus per detail; contradictions kept.</p></div>
+        <div role="listitem"><span class="n">06</span><b>Prioritize</b><p>Severity × novelty, with hard overrides.</p></div>
+        <div role="listitem"><span class="n">07</span><b>Dispatch</b><p>Units, agencies and suggested leads.</p></div>
+      </div>
+      <div class="grid3">
+        <div class="card">
+          <span class="spec"><span class="k">Operator</span> · /operator</span>
+          <ul>
+            <li>Priority queue with a NEW INFO badge and its reasons</li>
+            <li>Map of incidents, sized by call count</li>
+            <li>What callers report: every value with its share</li>
+            <li>“Why linked?”, then Confirm or Split (audited)</li>
+            <li>Ask next: open questions for the caller on the line</li>
+          </ul>
+        </div>
+        <div class="card">
+          <span class="spec"><span class="k">Officer</span> · /officer</span>
+          <ul>
+            <li>Three-line briefing: known, disputed, open</li>
+            <li>Dispatch package with per-field confidence and sources</li>
+            <li>Leads board: suggested → open → assigned → cleared</li>
+          </ul>
+        </div>
+        <div class="card">
+          <span class="spec"><span class="k">Sim</span> · /sim</span>
+          <ul>
+            <li>Three scripted scenarios replayed at 1×–20×</li>
+            <li>Mass-event mode and threshold sliders, then Apply &amp; Replay</li>
+            <li>Live metrics: collapse rate, bands, claim checks</li>
+            <li>A skippable guide on every page, with a “?” on each feature</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="foot"></div>
+  </section>
+
+  <!-- 3 · Novelties and results -->
+  <section class="slide" aria-roledescription="slide" aria-label="3 of 3: Novelties and results">
+    <div class="top">
+      <span class="wordmark">Nexus<b>911</b></span>
+      <span class="spec"><span class="k">03</span> · Novelties · Results</span>
+    </div>
+    <div class="body">
+      <h1>What's new, and how well it works.</h1>
+      <div class="grid2">
+        <div class="nov">
+          <div><span class="i">01</span><p><b>Claim-level graph.</b> Every statement is its own node with its caller and quote, so “7 say white, 3 say black” is kept and weighed, not overwritten.</p></div>
+          <div><span class="i">02</span><p><b>Quote-grounded guard.</b> An AI fact without a verbatim span of the transcript is rejected; partial matches stay pending.</p></div>
+          <div><span class="i">03</span><p><b>Information-gain priority.</b> <span class="num">severity × (1 − P_dup × (1 − novelty))</span>: repeats sink, new facts rise.</p></div>
+          <div><span class="i">04</span><p><b>Independence-aware weighting.</b> Hearsay and repeat callers count less, so an echoed rumor can't outvote eyewitnesses.</p></div>
+          <div><span class="i">05</span><p><b>Explainable three-band linking.</b> Auto, suggest or new, with every score visible and one-click Confirm or Split.</p></div>
+          <div><span class="i">06</span><p><b>Massachusetts-aware.</b> Town disambiguation, old and new exits, MBTA, campus and State Police routing, transfers, many languages.</p></div>
+        </div>
+        <div class="body" style="gap:1.4vh">
+          <div class="stats">
+            <div class="stat"><span class="v num">1.00</span><span class="l">Clustering F1</span></div>
+            <div class="stat"><span class="v num">5/5</span><span class="l">New incidents caught</span></div>
+            <div class="stat"><span class="v num">10/10</span><span class="l">New-info calls flagged</span></div>
+            <div class="stat"><span class="v num">82%</span><span class="l">Calls collapsed (28 → 5)</span></div>
+            <div class="stat"><span class="v num">86/0/0</span><span class="l">Claims verified/pending/rejected</span></div>
+            <div class="stat"><span class="v num">22/6</span><span class="l">Confirm-and-add / full intake</span></div>
+          </div>
+          <p class="soft">From <span class="num">scripts/evaluate.py</span> on the three synthetic demo scenarios (28 calls). These show the pipeline behaves as designed, not real-world accuracy.</p>
+          <div class="card">
+            <span class="spec"><span class="k">Built with</span> · Kiro</span>
+            <p>FastAPI · LangGraph · Claude · NetworkX graph · WebSocket events · React 18 · Tailwind · Leaflet. 164 backend tests and a Vitest suite for the console.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="foot"></div>
+  </section>
+
+</main>
+
+<script>
+  // Arrow keys, Page Up/Down, Space, Home/End, and the footer controls move between slides.
+  (function () {
+    const slides = Array.from(document.querySelectorAll(".slide"));
+    let index = 0;
+
+    slides.forEach((slide, i) => {
+      const foot = slide.querySelector(".foot");
+      foot.innerHTML =
+        '<span class="spec"><span class="k num">' + String(i + 1).padStart(2, "0") + "</span> / " +
+        String(slides.length).padStart(2, "0") + " · ← → to move</span>" +
+        '<div class="dots">' + slides.map((_, j) =>
+          '<button type="button" aria-label="Slide ' + (j + 1) + '" data-go="' + j + '"></button>').join("") + "</div>" +
+        '<div class="nav"><button type="button" data-step="-1">Back</button><button type="button" data-step="1">Next</button></div>';
+    });
+
+    function show(next) {
+      index = Math.max(0, Math.min(slides.length - 1, next));
+      slides.forEach((slide, i) => {
+        const on = i === index;
+        slide.classList.toggle("on", on);
+        slide.setAttribute("aria-hidden", on ? "false" : "true");
+        slide.querySelectorAll(".dots button").forEach((dot, j) => dot.setAttribute("aria-current", j === index ? "true" : "false"));
+        const [back, fwd] = slide.querySelectorAll(".nav button");
+        back.disabled = index === 0;
+        fwd.disabled = index === slides.length - 1;
+      });
+      history.replaceState(null, "", "#" + (index + 1));
+    }
+
+    document.addEventListener("click", (event) => {
+      const target = event.target.closest("button");
+      if (!target) return;
+      if (target.dataset.go) show(Number(target.dataset.go));
+      if (target.dataset.step) show(index + Number(target.dataset.step));
+    });
+    document.addEventListener("keydown", (event) => {
+      if (["ArrowRight", "PageDown", " "].includes(event.key)) { event.preventDefault(); show(index + 1); }
+      if (["ArrowLeft", "PageUp"].includes(event.key)) { event.preventDefault(); show(index - 1); }
+      if (event.key === "Home") show(0);
+      if (event.key === "End") show(slides.length - 1);
+    });
+
+    const fromHash = Number(location.hash.slice(1)) - 1;
+    show(Number.isInteger(fromHash) && fromHash >= 0 ? fromHash : 0);
+  })();
+</script>
+</body>
+</html>

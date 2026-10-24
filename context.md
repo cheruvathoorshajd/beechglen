@@ -229,6 +229,14 @@ c03's transcript ("A man just ran out of the store. He was wearing a black jacke
 - First live run (2026-10-24): all GETs 200, WebSocket delivered `call.processed`, a new transcript was extracted live by claude-sonnet-5-5 in 4.8 s (red hoodie, male, toward Symphony station), ask-next came from claude-haiku-5-5 (not the template).
 - The Kiro process list can show `run.py` as "exited" while the server is still listening on 8080; check with `lsof -nP -iTCP:8080 -sTCP:LISTEN`.
 
+## Feature tours, Sim fix, overview deck (2026-10-24)
+
+- **Sim "ends in a split second":** the backend replay was fine. Probes (API, Vite proxy, and headless Chrome clicking Start on /sim) all showed calls arriving 3–4 s apart at 10×. The problem was the page: the first call lands instantly, then nothing visible changes until the next call (30–60 s at 1×), and the status was a one-line caption. Start also stacked a second run onto the first run's incidents.
+- **Fix in `pages/Sim.tsx`:** Start now resets and then starts (like the onboarding demo). A new Replay panel shows Not started / Running / Stopped / Finished, a progress bar, a sim clock that ticks between events, and the time left. Each scenario card shows its call-time length and real duration at the chosen speed; 1× gets a real-time warning. `SCENARIOS[].lastCallS` must match `data/scenarios/*.json` (720, 380, 150).
+- **Tours:** `src/tour/{tours.ts,FeatureTour.tsx,tour.css}`. One tour each for Operator (10 steps), Officer (5) and Sim (8). Each opens on the first visit (`nexus911:tour:<page>`), and again from the bottom-left Guide button or a "?" (`TourHint`, aria-label "About …") next to a feature. Steps point at `data-tour` anchors; a step whose element isn't on screen shows centered with a "missing" note. Next/Back/Skip, Escape skips, ←/→ move, focus trap, focus returns to the opener. Auto-open is off under Vitest (`MODE === "test"`). New token `--tour-veil`.
+- **Deck:** `docs/nexus911-overview.html`, three self-contained slides (problem and goal, how it works and features, novelties and results). Numbers come from the README Evaluation table.
+- Vitest: 67 tests pass (11 new in `src/tour/tour.test.tsx`).
+
 ## Test conventions
 
 - `backend/tests/conftest.py` forces `DEMO_MODE=offline` and a blank `ANTHROPIC_API_KEY` before any app import, and resets settings and runtime thresholds around every test. No test touches the network.

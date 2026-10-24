@@ -8,6 +8,7 @@ import { CriticalBadge, PriorityPill } from "../components/console/chips";
 import { DispatchPackageCard } from "../components/console/evidence";
 import { BriefingCard, LeadsBoard } from "../components/console/officer";
 import { IncidentHeader } from "../components/console/IncidentPanel";
+import { FeatureTour, TourHint } from "../tour/FeatureTour";
 
 /** /officer: incident list, three-line briefing, dispatch package and leads board. */
 export default function Officer() {
@@ -30,9 +31,11 @@ export default function Officer() {
 
   return (
     <div className="grid h-full min-h-0 grid-cols-1 lg:grid-cols-[minmax(280px,340px)_minmax(0,1fr)]">
-      <section aria-labelledby="inc-h" className="flex min-h-0 flex-col border-r border-rule-soft">
-        <div className="border-b border-rule-soft px-4 py-3">
+      <FeatureTour id="officer" />
+      <section aria-labelledby="inc-h" className="flex min-h-0 flex-col border-r border-rule-soft" data-tour="officer-incidents">
+        <div className="flex items-center border-b border-rule-soft px-4 py-3">
           <SpecLabel as="h2" id="inc-h" k="Incidents" rest={[`${incidents.length} open`]} />
+          <TourHint tour="officer" target="officer-incidents" label="the incident list" />
         </div>
         <ul className="grid min-h-0 flex-1 content-start gap-2 overflow-y-auto p-3">
           {loaded && !incidents.length && (
@@ -74,7 +77,9 @@ export default function Officer() {
       <section aria-label="Officer view" className="min-h-0 overflow-y-auto p-4 md:p-6">
         {incident ? (
           <div className="grid gap-5">
-            <IncidentHeader detail={incident} />
+            <div data-tour="officer-header">
+              <IncidentHeader detail={incident} />
+            </div>
             <div className="grid gap-5 xl:grid-cols-2">
               <BriefingCard briefing={briefing} />
               <DispatchPackageCard dispatch={incident.dispatch} />
