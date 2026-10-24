@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Nexus911 · 3-minute demo</title>
+<style>
+  /* Self-contained: no external fonts, scripts or images, so it works offline.
+     Same tokens as frontend/src/index.css and docs/nexus911-overview.html. */
+  :root {
+    --ground: #000;
+    --card: #0c0c0c;
+    --raised: #161616;
+    --ink: #fff;
+    --ink-soft: #a3a3a3;
+    --rule: rgba(255, 255, 255, 0.14);
+    --rule-soft: rgba(255, 255, 255, 0.08);
+    --brand: #c00000;
+    --ok: #22c55e;
+    --warn: #eab308;
+    --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: var(--ground); color: var(--ink); font-family: var(--sans); }
+  body { overflow: hidden; -webkit-font-smoothing: antialiased; }
+
+  .deck { position: relative; height: 100vh; width: 100vw; }
+  .slide {
+    position: absolute; inset: 0;
+    display: grid; grid-template-rows: auto 1fr auto; gap: 2.2vh;
+    padding: 5vh 5vw 4vh;
+    opacity: 0; visibility: hidden; transform: translateY(12px);
+    transition: opacity .35s cubic-bezier(.22,1,.36,1), transform .35s cubic-bezier(.22,1,.36,1), visibility 0s .35s;
+  }
+  .slide.on { opacity: 1; visibility: visible; transform: none; transition-delay: 0s; }
+  .slide::before {
+    content: ""; position: absolute; right: -18vw; top: -30vh; width: 60vw; height: 60vw; border-radius: 50%;
+    background: radial-gradient(circle, rgba(192,0,0,.22), transparent 62%); pointer-events: none;
+  }
+
+  .top { display: flex; justify-content: space-between; align-items: center; position: relative; }
+  .wordmark { font-family: var(--serif); font-size: 22px; letter-spacing: -.01em; }
+  .wordmark b { color: var(--brand); font-weight: 600; }
+  .spec { font-family: var(--mono); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-soft); }
+  .spec .k { color: var(--ink); }
+
+  h1 { font-family: var(--serif); font-weight: 500; font-size: clamp(30px, 4vw, 54px); line-height: 1.05; letter-spacing: -.02em; margin: 0 0 1.2vh; max-width: 28ch; text-wrap: balance; }
+  p, li { font-size: clamp(13px, 1.1vw, 16px); line-height: 1.5; margin: 0; }
+  .lede { font-size: clamp(15px, 1.4vw, 19px); color: var(--ink-soft); max-width: 70ch; }
+  .num { font-family: var(--mono); font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
+  .body { position: relative; min-height: 0; display: grid; align-content: start; gap: 2.6vh; }
+
+  /* Slide 1: run of show */
+  .run { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.2vw; }
+  .act { background: var(--card); border: 1px solid var(--rule-soft); border-radius: 3px; padding: 2vh 1.2vw; display: grid; gap: 1.1vh; align-content: start; }
+  .act.lead { border-top: 3px solid var(--brand); }
+  .act .t { font-family: var(--mono); font-size: 12px; letter-spacing: .1em; color: var(--ink-soft); }
+  .act h2 { font-family: var(--serif); font-weight: 500; font-size: clamp(18px, 1.7vw, 24px); margin: 0; letter-spacing: -.01em; }
+  .act .where { font-family: var(--mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-soft); }
+  .beats { list-style: none; margin: 0; padding: 0; display: grid; gap: .9vh; }
+  .beats li { display: grid; grid-template-columns: 44px 1fr; gap: .5vw; font-size: clamp(12px, 1vw, 14.5px); }
+  .beats .c { font-family: var(--mono); font-size: 11.5px; color: var(--ink-soft); padding-top: 2px; }
+  .pill { display: inline-block; min-width: 30px; padding: 0 6px; border-radius: 3px; font-family: var(--mono); font-size: 12px; text-align: center; border: 1px solid var(--rule); color: var(--ink); }
+  .pill.high { background: var(--brand); border-color: var(--brand); }
+  .pill.mid { border-color: var(--warn); }
+
+  .lane { display: grid; gap: .8vh; }
+  .track { position: relative; height: 34px; border-top: 1px solid var(--rule); }
+  .track i { position: absolute; top: -5px; width: 9px; height: 9px; border-radius: 50%; background: var(--ink-soft); transform: translateX(-50%); }
+  .track i.hot { background: var(--brand); width: 13px; height: 13px; top: -7px; }
+  .track span { position: absolute; top: 12px; transform: translateX(-50%); font-family: var(--mono); font-size: 10.5px; letter-spacing: .08em; color: var(--ink-soft); white-space: nowrap; }
+  .track span.hot { color: var(--ink); }
+  .legend { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 11px; letter-spacing: .1em; color: var(--ink-soft); text-transform: uppercase; }
+
+  /* Slide 2: novelty → moment */
+  .map { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.2vw; }
+  .nov { background: var(--card); border: 1px solid var(--rule-soft); border-radius: 3px; padding: 2vh 1.2vw; display: grid; gap: 1vh; align-content: start; }
+  .nov .i { font-family: var(--mono); font-size: 11.5px; letter-spacing: .14em; color: var(--ink-soft); }
+  .nov h2 { font-family: var(--serif); font-weight: 500; font-size: clamp(17px, 1.55vw, 22px); margin: 0; letter-spacing: -.01em; }
+  .nov .see { border-left: 2px solid var(--brand); padding-left: .8vw; }
+  .nov .v { font-family: var(--serif); font-size: clamp(22px, 2.2vw, 32px); line-height: 1; letter-spacing: -.02em; }
+  .nov .l { font-family: var(--mono); font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-soft); }
+  .bars { display: grid; gap: 4px; }
+  .bar { display: grid; grid-template-columns: 58px 1fr 38px; gap: 8px; align-items: center; font-family: var(--mono); font-size: 11px; color: var(--ink-soft); }
+  .bar b { height: 5px; background: var(--raised); position: relative; }
+  .bar b::after { content: ""; position: absolute; inset: 0 auto 0 0; width: var(--w); background: var(--ok); }
+  .bar.soft b::after { background: var(--ink-soft); }
+  .principle { border: 1px solid var(--rule); border-left: 3px solid var(--brand); padding: 1.5vh 1.2vw; background: var(--card); border-radius: 3px; display: flex; gap: 1.2vw; align-items: baseline; flex-wrap: wrap; }
+  .principle b { font-family: var(--serif); font-weight: 500; font-size: clamp(16px, 1.5vw, 21px); }
+  .principle span { color: var(--ink-soft); }
+
+  .foot { display: flex; justify-content: space-between; align-items: center; position: relative; }
+  .dots { display: flex; gap: 6px; }
+  .dots button { width: 34px; height: 3px; border: 0; padding: 0; background: var(--rule); cursor: pointer; }
+  .dots button[aria-current="true"] { background: var(--brand); }
+  .nav { display: flex; gap: 8px; }
+  .nav button {
+    font-family: var(--mono); font-size: 12px; letter-spacing: .1em; text-transform: uppercase;
+    background: transparent; color: var(--ink); border: 1px solid var(--rule); border-radius: 3px; padding: 8px 14px; cursor: pointer;
+  }
+  .nav button:hover:not(:disabled) { border-color: var(--ink-soft); }
+  .nav button:disabled { opacity: .35; cursor: default; }
+  :focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+
+  @media (max-width: 900px) {
+    body { overflow: auto; }
+    .slide { position: relative; opacity: 1; visibility: visible; transform: none; min-height: 100vh; }
+    .run, .map { grid-template-columns: 1fr; }
+    .lane, .foot .nav, .foot .dots { display: none; }
+  }
+  @media print {
+    body { overflow: visible; }
+    .slide { position: relative; opacity: 1; visibility: visible; transform: none; height: 100vh; page-break-after: always; }
+    .nav, .dots { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) { .slide { transition: none; } }
+</style>
+</head>
+<body>
+<main class="deck" aria-roledescription="slide deck" aria-label="Nexus911 three-minute demo">
+
+  <!-- 1 · Run of show -->
+  <section class="slide on" aria-roledescription="slide" aria-label="1 of 2: The demo in three minutes">
+    <div class="top">
+      <span class="wordmark">Nexus<b>911</b></span>
+      <span class="spec"><span class="k">01</span> · Demo · Run of show</span>
+    </div>
+    <div class="body">
+      <div>
+        <h1>Three minutes, three scenarios, 28 synthetic 911 calls.</h1>
+        <p class="lede">Each scenario replays scripted calls with real timings. Watch duplicates sink, new information rise, and a new emergency jump to the top, while every decision stays explainable.</p>
+      </div>
+
+      <div class="run">
+        <div class="act lead">
+          <span class="t num">0:15 – 1:50</span>
+          <h2>Mass Ave robbery</h2>
+          <span class="where">Sim 10× → Operator</span>
+          <ul class="beats">
+            <li><span class="c num">0:20</span><span>Clerk's call opens the incident at <span class="pill high">90</span></span></li>
+            <li><span class="c num">0:24</span><span>8 repeat callers auto-link and sink to <span class="pill">0</span>–<span class="pill">22</span></span></li>
+            <li><span class="c num">0:35</span><span>White 83% · black 17%: weighed, not voted</span></li>
+            <li><span class="c num">0:56</span><span>Knife near Newbury: NEW INFO <span class="pill high">90</span></span></li>
+            <li><span class="c num">1:05</span><span>Why linked? 0.89 · Ask next</span></li>
+            <li><span class="c num">1:32</span><span>Fire, people trapped: new incident <span class="pill high">100</span></span></li>
+            <li><span class="c num">1:42</span><span>Split a call: people stay in control</span></li>
+          </ul>
+        </div>
+        <div class="act">
+          <span class="t num">1:50 – 2:08</span>
+          <h2>Officer view</h2>
+          <span class="where">Officer</span>
+          <ul class="beats">
+            <li><span class="c num">·</span><span>Briefing: known, disputed, open</span></li>
+            <li><span class="c num">·</span><span>Dispatch: 3 Police, 1 EMS standby, with share and sources</span></li>
+            <li><span class="c num">·</span><span>Accept the suggested lead</span></li>
+          </ul>
+        </div>
+        <div class="act">
+          <span class="t num">2:08 – 2:30</span>
+          <h2>Pike crash</h2>
+          <span class="where">Sim 20× → Operator</span>
+          <ul class="beats">
+            <li><span class="c num">·</span><span>“Exit 63”, “old exit 8”, “mile 62”, a text: one place</span></li>
+            <li><span class="c num">·</span><span>Transfer from Palmer to State Police, context kept</span></li>
+            <li><span class="c num">·</span><span>SUV silver 58% · white 42%: contested</span></li>
+            <li><span class="c num">·</span><span>SUV on fire: new hazard <span class="pill high">90</span></span></li>
+          </ul>
+        </div>
+        <div class="act">
+          <span class="t num">2:30 – 2:55</span>
+          <h2>Washington St</h2>
+          <span class="where">Sim 20× → Operator → Metrics</span>
+          <ul class="beats">
+            <li><span class="c num">·</span><span>Boston and Brookline: two incidents</span></li>
+            <li><span class="c num">·</span><span>No town given: <b>suggest</b>, ask “Which town are you in?”</span></li>
+            <li><span class="c num">·</span><span>Someone bleeding: new injury <span class="pill high">90</span></span></li>
+            <li><span class="c num">·</span><span>Close on live metrics</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="lane" aria-label="Robbery calls on the simulated clock">
+        <div class="legend"><span>Robbery · simulated clock</span><span>12 calls · T+00:00 → T+12:00 · 72 s at 10×</span></div>
+        <div class="track" aria-hidden="true">
+          <i class="hot" style="left:0%"></i><span class="hot" style="left:4%">T+00 · new 90</span>
+          <i style="left:5.6%"></i><i style="left:9.7%"></i><i style="left:13.9%"></i><i style="left:18.1%"></i>
+          <i style="left:22.2%"></i><i style="left:26.4%"></i><i style="left:30.6%"></i><i style="left:36.1%"></i>
+          <span style="left:19%">8 repeats · 0–22</span>
+          <i class="hot" style="left:50%"></i><span class="hot" style="left:50%">T+06 · knife 90</span>
+          <i style="left:55.6%"></i>
+          <i class="hot" style="left:100%"></i><span class="hot" style="left:96%">T+12 · fire 100</span>
+        </div>
+      </div>
+    </div>
+    <div class="foot"></div>
+  </section>
+
+  <!-- 2 · Novelty → moment -->
+  <section class="slide" aria-roledescription="slide" aria-label="2 of 2: What each moment shows">
+    <div class="top">
+      <span class="wordmark">Nexus<b>911</b></span>
+      <span class="spec"><span class="k">02</span> · Demo · What you'll see</span>
+    </div>
+    <div class="body">
+      <h1>Six ideas, each one visible on screen.</h1>
+      <div class="map">
+        <div class="nov">
+          <span class="i">01 · Claim-level graph</span>
+          <h2>Every statement keeps its caller and quote.</h2>
+          <p class="see">Robbery → <b>What callers report</b>: white and black both stay on screen, with sources.</p>
+        </div>
+        <div class="nov">
+          <span class="i">02 · Quote-grounded guard</span>
+          <h2>No quote, no fact.</h2>
+          <p class="see">An extracted fact without a verbatim span of the transcript is rejected.</p>
+          <div><span class="v num">86 / 0 / 0</span><br /><span class="l">Claims verified / pending / rejected</span></div>
+        </div>
+        <div class="nov">
+          <span class="i">03 · Information-gain priority</span>
+          <h2>Repeats sink, new facts rise.</h2>
+          <p class="see">The 11th robbery caller says “knife”: <span class="pill high">90</span> while repeats sit at <span class="pill">0</span>–<span class="pill">22</span>.</p>
+        </div>
+        <div class="nov">
+          <span class="i">04 · Independence-aware weighting</span>
+          <h2>An echoed rumor can't outvote eyewitnesses.</h2>
+          <div class="bars" aria-label="Upper clothing color: raw 70/30, weighted 83/17">
+            <div class="bar soft"><span>7 of 10</span><b style="--w:70%"></b><span class="num">70%</span></div>
+            <div class="bar"><span>white</span><b style="--w:83%"></b><span class="num">83%</span></div>
+            <div class="bar soft"><span>black</span><b style="--w:17%"></b><span class="num">17%</span></div>
+          </div>
+          <p class="see">Hearsay (“my neighbor said”) and a repeat caller count for less.</p>
+        </div>
+        <div class="nov">
+          <span class="i">05 · Explainable three-band linking</span>
+          <h2>Auto, suggest or new, with the reasons.</h2>
+          <p class="see">Knife call: <b>auto</b> at 0.89. Fire call: capped at 0.49 by the type gate, so <b>new</b>. No-town caller: <b>suggest</b>. One click to Confirm or Split.</p>
+        </div>
+        <div class="nov">
+          <span class="i">06 · Massachusetts-aware</span>
+          <h2>Old exits, duplicate streets, transfers.</h2>
+          <p class="see">Pike: 12 calls → 1 incident at Exit 63 (old Exit 8). Washington St: Boston vs. Brookline kept apart. Spanish and Portuguese callers link like any other.</p>
+        </div>
+      </div>
+      <div class="principle">
+        <b>No call is ever dropped.</b>
+        <span>Evaluation over all three scenarios: 28 calls → 5 incidents (82% collapsed), 5/5 new incidents and 10/10 new-info calls caught. Synthetic data: it shows the design works, not real-world accuracy.</span>
+      </div>
+    </div>
+    <div class="foot"></div>
+  </section>
+
+</main>
+
+<script>
+  // Arrow keys, Page Up/Down, Space, Home/End, and the footer controls move between slides.
+  (function () {
+    const slides = Array.from(document.querySelectorAll(".slide"));
+    let index = 0;
+
+    slides.forEach((slide, i) => {
+      slide.querySelector(".foot").innerHTML =
+        '<span class="spec"><span class="k num">' + String(i + 1).padStart(2, "0") + "</span> / " +
+        String(slides.length).padStart(2, "0") + " · ← → to move</span>" +
+        '<div class="dots">' + slides.map((_, j) =>
+          '<button type="button" aria-label="Slide ' + (j + 1) + '" data-go="' + j + '"></button>').join("") + "</div>" +
+        '<div class="nav"><button type="button" data-step="-1">Back</button><button type="button" data-step="1">Next</button></div>';
+    });
+
+    function show(next) {
+      index = Math.max(0, Math.min(slides.length - 1, next));
+      slides.forEach((slide, i) => {
+        const on = i === index;
+        slide.classList.toggle("on", on);
+        slide.setAttribute("aria-hidden", on ? "false" : "true");
+        slide.querySelectorAll(".dots button").forEach((dot, j) => dot.setAttribute("aria-current", j === index ? "true" : "false"));
+        const [back, fwd] = slide.querySelectorAll(".nav button");
+        back.disabled = index === 0;
+        fwd.disabled = index === slides.length - 1;
+      });
+      history.replaceState(null, "", "#" + (index + 1));
+    }
+
+    document.addEventListener("click", (event) => {
+      const target = event.target.closest("button");
+      if (!target) return;
+      if (target.dataset.go) show(Number(target.dataset.go));
+      if (target.dataset.step) show(index + Number(target.dataset.step));
+    });
+    document.addEventListener("keydown", (event) => {
+      if (["ArrowRight", "PageDown", " "].includes(event.key)) { event.preventDefault(); show(index + 1); }
+      if (["ArrowLeft", "PageUp"].includes(event.key)) { event.preventDefault(); show(index - 1); }
+      if (event.key === "Home") show(0);
+      if (event.key === "End") show(slides.length - 1);
+    });
+
+    const fromHash = Number(location.hash.slice(1)) - 1;
+    show(Number.isInteger(fromHash) && fromHash >= 0 ? fromHash : 0);
+  })();
+</script>
+</body>
+</html>
