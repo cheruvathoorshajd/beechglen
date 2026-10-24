@@ -426,7 +426,8 @@ DashboardEvent
 - **/operator:** three columns. **Queue** cards show a priority pill (crimson at 80+, yellow outline 50–79, grey below 50, always with the number), band chip, NEW INFO badge with reasons, language, channel and role chips, and T+. **Map** (Leaflet, OpenStreetMap tiles) shows incidents colored by severity and sized by call count. **Incident panel** shows the header with T+ first call and T+ dispatch-ready, transfer banner, consensus bars with every value's share and source counts, contradictions, calls with "Why linked?", Confirm and Split, the ask-next panel, and the dispatch package.
 - **/officer:** incident list, three-line briefing (known, disputed, open), dispatch package, and a leads board (suggested → open → assigned → cleared).
 - **/sim:** scenario picker, speed, Start, Stop and Reset, mass-event toggle, threshold sliders with Apply & Replay, and a metrics panel. Stretch: caller chat and agent panel.
-- **Data flow:** `useDashboardSocket` listens on `/ws/dashboard` and triggers refetches through a small Zustand store. `VITE_USE_MOCKS=true` serves fixtures from `src/mocks/`, so the UI can be built before the backend exists.
+- **Data flow:** `useDashboardSocket` listens on `/ws/dashboard` and triggers refetches through a small Zustand store. `VITE_USE_MOCKS=true` serves fixtures from `src/mocks/`, so the UI can be built before the backend exists. The mocks are exported from a real replay (`python scripts/export_mocks.py`) and checked against the API contracts by `backend/tests/test_frontend_mocks.py`.
+- **Build and test:** `npm --prefix frontend run build` writes `frontend/dist`, which `python run.py` serves at `/` with an SPA fallback. `npm --prefix frontend test` runs the Vitest suite (pages rendered from the mocks, priority thresholds, session and route guard, sign-in validation, onboarding focus, Escape and server-down state).
 
 ## LLM usage
 

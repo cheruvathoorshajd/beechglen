@@ -94,7 +94,7 @@ Stage 8 (frontend) follows `KIRO_DESIGN_PROMPTS.md` section 2. Sources: `.kiro/s
 - [x] D3 Landing at `/` (V2_SCREENS.md); console default `/operator`; CTAs go to `/operator` until D4.
 - [x] D4 Session module, route guard, sign-in, console header (who chip, Replay intro, Sign out); Vitest for session.ts (incl. throwing storage), guard redirects, name validation.
 - [x] D5 Onboarding wizard; Vitest for Escape skipping, focus to each heading, server-down state.
-- [ ] D6 Verify: backend suite, build, Vitest (background, exit marker); grep hex/rgb/rgba/Tailwind color utilities outside token files; contrast table; README + context.md; browser checklist.
+- [x] D6 Verify: backend suite, build, Vitest (background, exit marker); grep hex/rgb/rgba/Tailwind color utilities outside token files; contrast table; README + context.md; browser checklist.
 
 ### Where it stands
 
@@ -110,7 +110,28 @@ Stage 8 (frontend) follows `KIRO_DESIGN_PROMPTS.md` section 2. Sources: `.kiro/s
 - D3 done: `src/landing/Landing.tsx` + `landing.css` (mock CSS ported; flow is 7 columns → 4 at 980 → 2 at 760 → 1 at 560; table scrolls in `.tbl-wrap`; `.lp { overflow-x: clip }`). Every section is plain markup (no scroll animations). CTAs come from `src/landing/targets.ts` `useStartTargets()`, which returns `/operator` for everything until D4. Colophon: "Built for the hackathon" (README's hackathon name is still a placeholder; `HACKATHON` constant in Landing.tsx) and the GitHub README link. `/` is the landing; console default is `/operator`. Verify: `.kiro/logs/fe-d3.txt` build ✓, Vitest 21/21.
 - D4 done: `src/auth/session.ts` (V2_SCREENS.md exports plus `validateName`, `NAME_EMPTY`/`NAME_INVALID`, `useSessionVersion`; storage wrapped in try/catch with an in-memory fallback, so private mode still works), `src/auth/guards.tsx` (`RequireConsole`, `RequireSession`, `SignedOutOnly`, `signOut()`; sign-out navigates to `/` first and the console guard renders nothing while signing out, else it raced to `/signin`), `src/auth/SignIn.tsx` + `auth.css`, `src/auth/SessionControls.tsx` (who chip, Replay intro, Sign out in the TopBar), `src/landing/targets.ts` now session-aware (Get started/Sign in → /signin; with a session "Open the console" → /operator, Run the demo → /welcome; guest card sets a guest session). `src/onboarding/Onboarding.tsx` is a placeholder until D5. Verify: `.kiro/logs/fe-d4b.txt` build ✓, Vitest 45/45 (session incl. throwing storage, guard redirects, name validation, sign-in errors + focus, header controls).
 - D5 done: `src/onboarding/Onboarding.tsx` + `onboarding.css` + `onboarding.test.tsx`. Fixed full-screen dialog (role dialog, aria-modal), 280px rail, 2px progress bar, bloom, footer Back · Skip intro · Continue. Step id mirrored in sessionStorage `nexus911:onboarding-step`; focus moves to each step's h1; `useFocusTrap` keeps Tab inside and Escape = Skip; step 3 cards are a radiogroup with arrow keys; `GET /api/metrics` with a 4 s timeout decides server up/down (down: alert + Try again, demo disabled, console selected); the demo does `POST /api/reset` then `POST /api/simulation/start` `{mass_ave_robbery, speed}` with a spinner, "already running" counts as success, failure shows an alert with "Open the console instead". Finish (any path) = markOnboarded, clear step, go to /operator. Verify: `.kiro/logs/fe-d5.txt` build ✓, Vitest 51/51, no warnings.
-- Next: D6 verify (backend suite, build, Vitest, color grep, contrast table, served-route curl check, README + context.md, browser checklist), then stage 9 Dockerfile.
+- D6 done: backend suite `.kiro/logs/d6-pytest.txt` 164 passed; frontend `.kiro/logs/d6-fe.txt` build ✓ and Vitest 51/51. Served check (`python run.py` in the background, then stopped): `/`, `/signin`, `/welcome`, `/operator`, `/officer`, `/sim` → 200 text/html (built index), `/assets/index-*.js` 200, `/api/queue` 200 JSON, `/docs` 200, `/api/nope` 404. README "Frontend" gained build/test commands. Color grep: no hex/rgb()/rgba() in `frontend/src` outside `src/index.css`, and no Tailwind default-palette color utilities (all colors go through the tokens).
+
+### Contrast (WCAG 2.x, computed from the token values)
+
+| Text / element | Background | Ratio | Use | Result |
+|---|---|---|---|---|
+| ink #FFF | ground #000 | 21.0 | body, headings | pass |
+| ink | card #0C0C0C | 19.6 | panels, rail, story panel | pass |
+| ink | raised #161616 | 18.1 | selected rows, lead cards | pass |
+| ink-soft #A3A3A3 | ground | 8.3 | secondary text, captions, labels | pass |
+| ink-soft | card | 7.8 | captions in panels | pass |
+| ink-soft | raised | 7.2 | captions on selected rows | pass |
+| ink | brand #C00000 | 6.5 | primary button, Critical badge, Tag, 80+ pill, done step | pass |
+| warn #EAB308 | ground / card | 11.0 / 10.2 | 50-79 pill, SUGGEST, △ Contested, limits "!" | pass |
+| ok #22C55E | ground / card | 9.2 / 8.6 | LIVE, CONFIRMED, dispatch ready | pass |
+| ink | warn tint over ground | 19.5 | prototype notice | pass |
+| brand | ground | 3.24 | wordmark "911" (≈20px bold = large), icons, dots, rules, borders, focus ring | pass for large/UI only |
+| brand | card | 3.02 | wordmark "911" in top bar, rail and story panel; icons | pass for large/UI, barely |
+| brand | brand-tint tile over ground | 3.03 | novelty and card icons | pass for UI |
+| ink-soft | brand (disc) | 2.57 | must never happen | **fail if it occurs**, so check that no grey text overlaps the disc |
+
+No small crimson text anywhere: errors are white with a crimson ✕, badges with crimson borders use white text.
 
 ## Build state
 
@@ -201,6 +222,12 @@ c03's transcript ("A man just ran out of the store. He was wearing a black jacke
 ## Scenario data notes
 
 - 28 calls: robbery c01-c12 (A, plus B = c12), pike p01-p12 (C), washington w01-w04 (D, E). Every robbery caller except c10 and c12 names Mass Ave and Boylston; flight directions are separate sentences ("He ran toward Hynes station"). Pike SUV is always mentioned before the pickup, so extraction maps the SUV to subject `vehicle`. Device jitter stays within ±0.0003.
+
+## Live checks
+
+- `scripts/smoke_check.py` runs against a running server (`python run.py`): every GET read model, `/ws/dashboard` delivering `call.processed`, one never-cached call to prove Claude extraction is live (a few cents), ask-next not being the template, briefing, and confirm. Log: `.kiro/logs/smoke-live.txt`.
+- First live run (2026-10-24): all GETs 200, WebSocket delivered `call.processed`, a new transcript was extracted live by claude-sonnet-5-5 in 4.8 s (red hoodie, male, toward Symphony station), ask-next came from claude-haiku-5-5 (not the template).
+- The Kiro process list can show `run.py` as "exited" while the server is still listening on 8080; check with `lsof -nP -iTCP:8080 -sTCP:LISTEN`.
 
 ## Test conventions
 
