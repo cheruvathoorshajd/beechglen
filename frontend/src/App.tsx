@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import { ConsoleLayout } from "./components/console/shell";
+import Landing from "./landing/Landing";
 import Operator from "./pages/Operator";
 import Officer from "./pages/Officer";
 import Sim from "./pages/Sim";
@@ -8,7 +9,7 @@ import "./components/console/console.css";
 export default function App() {
   return (
     <Routes>
-      <Route path="/" element={<Navigate to="/operator" replace />} />
+      <Route path="/" element={<Landing />} />
       <Route
         path="/operator"
         element={

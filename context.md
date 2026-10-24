@@ -91,7 +91,7 @@ Stage 8 (frontend) follows `KIRO_DESIGN_PROMPTS.md` section 2. Sources: `.kiro/s
 
 - [x] D1 Foundations: README "Frontend" + tech.md frontend section; font packages; tokens + base styles (body, :focus-visible, text-wrap: balance, reduced motion); primitives in `src/ui/` (Wordmark, Button, Badge, Tag, SpecLabel, ConfidenceBar, Field, Segmented, ChoiceCard, Disc, Bloom, LiveDot, Icon); remove off-palette colors.
 - [x] D2 Console: every C1 task (data layer, mocks, shell, queue + map, incident panel + Why linked, ask-next + dispatch, officer, sim) built in the "Console mapping" style; Wordmark in the top bar; Vitest for priority pill thresholds and the Critical badge word.
-- [ ] D3 Landing at `/` (V2_SCREENS.md); console default `/operator`; CTAs go to `/operator` until D4.
+- [x] D3 Landing at `/` (V2_SCREENS.md); console default `/operator`; CTAs go to `/operator` until D4.
 - [ ] D4 Session module, route guard, sign-in, console header (who chip, Replay intro, Sign out); Vitest for session.ts (incl. throwing storage), guard redirects, name validation.
 - [ ] D5 Onboarding wizard; Vitest for Escape skipping, focus to each heading, server-down state.
 - [ ] D6 Verify: backend suite, build, Vitest (background, exit marker); grep hex/rgb/rgba/Tailwind color utilities outside token files; contrast table; README + context.md; browser checklist.
@@ -107,7 +107,8 @@ Stage 8 (frontend) follows `KIRO_DESIGN_PROMPTS.md` section 2. Sources: `.kiro/s
   - Decision: queue cards use the call's own severity for Critical (else every robbery duplicate would be Critical, since the incident is 0.9); incident cards use incident severity.
   - P2 polish included: first-in-queue highlight, NEW INFO toasts with reasons, /operator panels scroll inside a full-height grid, gates in plain words.
   - `/` redirects to `/operator` until D3. Verify: `.kiro/logs/fe-d2.txt` build ✓, Vitest 17/17 (priority thresholds, Critical word, three pages render from mocks with the map stubbed).
-- Next: D3 landing.
+- D3 done: `src/landing/Landing.tsx` + `landing.css` (mock CSS ported; flow is 7 columns → 4 at 980 → 2 at 760 → 1 at 560; table scrolls in `.tbl-wrap`; `.lp { overflow-x: clip }`). Every section is plain markup (no scroll animations). CTAs come from `src/landing/targets.ts` `useStartTargets()`, which returns `/operator` for everything until D4. Colophon: "Built for the hackathon" (README's hackathon name is still a placeholder; `HACKATHON` constant in Landing.tsx) and the GitHub README link. `/` is the landing; console default is `/operator`. Verify: `.kiro/logs/fe-d3.txt` build ✓, Vitest 21/21.
+- Next: D4 session, guard, sign-in, console header.
 
 ## Build state
 
