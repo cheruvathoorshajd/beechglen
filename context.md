@@ -84,7 +84,7 @@ scripts, scenarios, cache, frontend, Dockerfile, tests).
 
 - [x] Stage 0: fresh venv + deps, `.kiro/logs/` ignored, `.env.example`, context.md, steering pointer
 - [x] Stage 1: review fixes R1, R3, R4 (sanitizer), R5, R7 + tests for locate, link, client, sanitizer
-- [ ] Stage 2: scenario data `data/scenarios/{mass_ave_robbery,pike_crash,washington_st}.json` (playbook 0.3)
+- [x] Stage 2: scenario data `data/scenarios/{mass_ave_robbery,pike_crash,washington_st}.json` (playbook 0.3); rules locked by `test_scenario_data.py`
 - [ ] Stage 3: `pipeline/weigh.py`, `priority.py`, `dispatch.py` + tests (A-5..A-7)
 - [ ] Stage 4: `llm/prompts.py` (Appendix A-D verbatim), `pipeline/extract.py`, `pipeline/verify.py` + tests (B-1..B-3)
 - [ ] Stage 5: `flow/`, `context.py`, `graph/views.py`, store additions + flow test (A-8)
@@ -103,10 +103,16 @@ scripts, scenarios, cache, frontend, Dockerfile, tests).
 
 - Stage 1: `.venv/bin/python -m pytest > .kiro/logs/pytest-stage1.txt` → 60 passed (test_locate, test_link, test_llm_client, test_schema). Note: pytest.ini already passes `-q`; adding another `-q` hides the summary line.
 
+- Stage 2: 0.3 one-liner → `.kiro/logs/scenarios-check.txt` = ok (28 calls parse as CallIn); `test_scenario_data.py` → `.kiro/logs/pytest-stage2.txt` = 6 passed.
+
+## Scenario data notes
+
+- 28 calls: robbery c01-c12 (A, plus B = c12), pike p01-p12 (C), washington w01-w04 (D, E). Every robbery caller except c10 and c12 names Mass Ave and Boylston; flight directions are separate sentences ("He ran toward Hynes station"). Pike SUV is always mentioned before the pickup, so extraction maps the SUV to subject `vehicle`. Device jitter stays within ±0.0003.
+
 ## Test conventions
 
 - `backend/tests/conftest.py` forces `DEMO_MODE=offline` and a blank `ANTHROPIC_API_KEY` before any app import, and resets settings and runtime thresholds around every test. No test touches the network.
 
 ## Next step
 
-Stage 2: write `data/scenarios/mass_ave_robbery.json`, `pike_crash.json`, `washington_st.json` exactly per KIRO_PROMPTS.md 0.3, then run the 0.3 validation one-liner.
+Stage 3: `pipeline/weigh.py`, `pipeline/priority.py`, `pipeline/dispatch.py` as pure functions (README sections 5, 6, 7) with tests: weigh 7 white vs 3 black ≈ 0.83/0.17 not contested; priority worked-example rows (3, 90, 100); dispatch rules and routing.

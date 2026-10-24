@@ -1,0 +1,63 @@
+{
+  "scenario_id": "washington_st",
+  "title": "Fights on Washington Street in Boston and Brookline",
+  "start_time": "2026-10-24T22:00:00-04:00",
+  "calls": [
+    {
+      "id": "w01",
+      "t_offset_s": 0,
+      "transcript": "Two men are fighting on Washington Street. They're punching each other right in front of me. Please send someone.",
+      "channel": "voice",
+      "caller_hash": "wash-01",
+      "caller_role_hint": "witness",
+      "device_lat": 42.35562,
+      "device_lng": -71.06038,
+      "psap_id": "boston-ecc",
+      "transferred_from": null,
+      "truth_incident": "D",
+      "truth_new_info": true
+    },
+    {
+      "id": "w02",
+      "t_offset_s": 60,
+      "transcript": "There's a fight outside a bar on Washington Street. A few guys are shoving and swinging at each other. It's getting worse.",
+      "channel": "voice",
+      "caller_hash": "wash-02",
+      "caller_role_hint": "witness",
+      "device_lat": 42.33274,
+      "device_lng": -71.11648,
+      "psap_id": "brookline-local",
+      "transferred_from": null,
+      "truth_incident": "E",
+      "truth_new_info": true
+    },
+    {
+      "id": "w03",
+      "t_offset_s": 120,
+      "transcript": "I'm walking past a fight on Washington Street. One guy has a bottle in his hand. I'm staying back.",
+      "channel": "voice",
+      "caller_hash": "wash-03",
+      "caller_role_hint": "bystander",
+      "device_lat": null,
+      "device_lng": null,
+      "psap_id": "boston-ecc",
+      "transferred_from": null,
+      "truth_incident": "D",
+      "truth_new_info": true
+    },
+    {
+      "id": "w04",
+      "t_offset_s": 150,
+      "transcript": "I'm watching the fight on Washington near Downtown Crossing. Someone is bleeding now. He's holding his head.",
+      "channel": "voice",
+      "caller_hash": "wash-04",
+      "caller_role_hint": "witness",
+      "device_lat": 42.35541,
+      "device_lng": -71.06063,
+      "psap_id": "boston-ecc",
+      "transferred_from": null,
+      "truth_incident": "D",
+      "truth_new_info": true
+    }
+  ]
+}
