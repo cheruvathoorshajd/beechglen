@@ -1,0 +1,53 @@
+{
+  "_comment": "Demo-only highway exit table. Massachusetts renumbered exits from sequential to mile-based, and callers still use both. Coordinates from README 'Demo anchor coordinates'. Production would use MassDOT data.",
+  "route_aliases": {
+    "pike": "I-90",
+    "mass pike": "I-90",
+    "massachusetts turnpike": "I-90",
+    "turnpike": "I-90",
+    "90": "I-90",
+    "i 90": "I-90",
+    "i90": "I-90",
+    "interstate 90": "I-90",
+    "128": "I-95",
+    "95": "I-95",
+    "i 95": "I-95",
+    "i95": "I-95",
+    "route 128": "I-95",
+    "interstate 95": "I-95"
+  },
+  "direction_aliases": {
+    "eastbound": "EB",
+    "east": "EB",
+    "eb": "EB",
+    "westbound": "WB",
+    "west": "WB",
+    "wb": "WB",
+    "northbound": "NB",
+    "north": "NB",
+    "nb": "NB",
+    "southbound": "SB",
+    "south": "SB",
+    "sb": "SB"
+  },
+  "exits": [
+    {
+      "route": "I-90",
+      "new_exit": "63",
+      "old_exit": "8",
+      "mile": 63.0,
+      "town": "Palmer",
+      "lat": 42.173,
+      "lng": -72.328
+    },
+    {
+      "route": "I-90",
+      "new_exit": "49",
+      "old_exit": "5",
+      "mile": 49.0,
+      "town": "Chicopee",
+      "lat": 42.16,
+      "lng": -72.58
+    }
+  ]
+}

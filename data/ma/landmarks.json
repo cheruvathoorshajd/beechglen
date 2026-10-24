@@ -1,0 +1,89 @@
+{
+  "_comment": "Demo-only landmark table: MBTA stations, campuses and named areas. Coordinates from README 'Demo anchor coordinates'. agency_hint routes an incident away from the default town police.",
+  "landmarks": [
+    {
+      "id": "hynes",
+      "name": "Hynes Convention Center station",
+      "kind": "station",
+      "town": "Boston",
+      "lat": 42.348,
+      "lng": -71.0877,
+      "agency_hint": "mbta-transit-police",
+      "aliases": [
+        "hynes",
+        "hynes station",
+        "hynes convention center",
+        "hynes convention center station",
+        "hynes t stop"
+      ]
+    },
+    {
+      "id": "symphony",
+      "name": "Symphony station",
+      "kind": "station",
+      "town": "Boston",
+      "lat": 42.3425,
+      "lng": -71.0853,
+      "agency_hint": "mbta-transit-police",
+      "aliases": [
+        "symphony",
+        "symphony station",
+        "symphony t stop",
+        "symphony hall station"
+      ]
+    },
+    {
+      "id": "northeastern",
+      "name": "Northeastern University",
+      "kind": "campus",
+      "town": "Boston",
+      "lat": 42.3398,
+      "lng": -71.0892,
+      "agency_hint": "northeastern-police",
+      "aliases": [
+        "northeastern",
+        "northeastern university",
+        "neu",
+        "northeastern campus"
+      ]
+    },
+    {
+      "id": "downtown-crossing",
+      "name": "Downtown Crossing",
+      "kind": "area",
+      "town": "Boston",
+      "lat": 42.3555,
+      "lng": -71.0605,
+      "agency_hint": null,
+      "aliases": [
+        "downtown crossing",
+        "downtown xing"
+      ]
+    },
+    {
+      "id": "brookline-village",
+      "name": "Brookline Village",
+      "kind": "area",
+      "town": "Brookline",
+      "lat": 42.3326,
+      "lng": -71.1166,
+      "agency_hint": null,
+      "aliases": [
+        "brookline village"
+      ]
+    },
+    {
+      "id": "union-square",
+      "name": "Union Square",
+      "kind": "area",
+      "town": "Somerville",
+      "lat": 42.3797,
+      "lng": -71.0934,
+      "agency_hint": null,
+      "aliases": [
+        "union square",
+        "union sq somerville"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "_comment": "Demo-only agency table. Routing is illustrative; real mutual-aid and jurisdiction rules vary by community.",
+  "agencies": [
+    { "id": "boston-pd", "name": "Boston Police", "kind": "local_pd", "town": "Boston" },
+    { "id": "brookline-pd", "name": "Brookline Police", "kind": "local_pd", "town": "Brookline" },
+    { "id": "somerville-pd", "name": "Somerville Police", "kind": "local_pd", "town": "Somerville" },
+    { "id": "cambridge-pd", "name": "Cambridge Police", "kind": "local_pd", "town": "Cambridge" },
+    { "id": "arlington-pd", "name": "Arlington Police", "kind": "local_pd", "town": "Arlington" },
+    { "id": "palmer-pd", "name": "Palmer Police", "kind": "local_pd", "town": "Palmer" },
+    { "id": "chicopee-pd", "name": "Chicopee Police", "kind": "local_pd", "town": "Chicopee" },
+    { "id": "state-police", "name": "Massachusetts State Police", "kind": "state_police", "town": null },
+    { "id": "mbta-transit-police", "name": "MBTA Transit Police", "kind": "mbta_police", "town": null },
+    { "id": "northeastern-police", "name": "Northeastern University Police", "kind": "campus_police", "town": "Boston" },
+    { "id": "boston-fire", "name": "Boston Fire", "kind": "fire", "town": "Boston" },
+    { "id": "boston-ems", "name": "Boston EMS", "kind": "ems", "town": "Boston" },
+    { "id": "local-fire", "name": "Local Fire Department", "kind": "fire", "town": null },
+    { "id": "local-ems", "name": "Local EMS", "kind": "ems", "town": null }
+  ]
+}

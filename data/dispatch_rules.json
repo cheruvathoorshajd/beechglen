@@ -1,0 +1,67 @@
+{
+  "_comment": "ILLUSTRATIVE unit recommendations for a demo. These are NOT real dispatch protocols; actual run cards vary by agency. First matching rule wins.",
+  "rules": [
+    {
+      "id": "fire_trapped",
+      "types": ["fire"],
+      "requires_flags": ["trapped"],
+      "units": ["3 Engine", "1 Ladder", "2 EMS", "1 Police"]
+    },
+    {
+      "id": "fire",
+      "types": ["fire"],
+      "requires_flags": [],
+      "units": ["2 Engine", "1 Ladder", "1 EMS"]
+    },
+    {
+      "id": "crash_highway_injuries",
+      "types": ["vehicle_crash"],
+      "requires_flags": ["injuries_reported"],
+      "location_kinds": ["highway"],
+      "units": ["2 EMS", "1 Fire", "State Police"]
+    },
+    {
+      "id": "crash_highway",
+      "types": ["vehicle_crash"],
+      "requires_flags": [],
+      "location_kinds": ["highway"],
+      "units": ["1 Fire", "State Police"]
+    },
+    {
+      "id": "crash_injuries",
+      "types": ["vehicle_crash"],
+      "requires_flags": ["injuries_reported"],
+      "units": ["1 EMS", "1 Fire", "1 Police"]
+    },
+    {
+      "id": "violent_weapon",
+      "types": ["shooting", "stabbing", "robbery", "assault"],
+      "requires_flags": ["weapon_present"],
+      "units": ["3 Police", "1 EMS standby"]
+    },
+    {
+      "id": "violent",
+      "types": ["robbery", "assault"],
+      "requires_flags": [],
+      "units": ["2 Police"]
+    },
+    {
+      "id": "medical_not_breathing",
+      "types": ["medical"],
+      "requires_flags": ["not_breathing"],
+      "units": ["2 EMS (ALS)", "1 Fire"]
+    },
+    {
+      "id": "medical",
+      "types": ["medical"],
+      "requires_flags": [],
+      "units": ["1 EMS"]
+    },
+    {
+      "id": "default",
+      "types": [],
+      "requires_flags": [],
+      "units": ["1 Police"]
+    }
+  ]
+}

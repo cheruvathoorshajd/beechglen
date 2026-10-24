@@ -1,0 +1,134 @@
+{
+  "_comment": "Demo-only Massachusetts street gazetteer. Approximate coordinates taken from README 'Demo anchor coordinates'. Production would use MassGIS. Street and town keys are stored canonicalized (lowercase, suffixes expanded).",
+  "phrase_aliases": {
+    "mass ave": "massachusetts avenue",
+    "mass av": "massachusetts avenue",
+    "massachusetts ave": "massachusetts avenue",
+    "comm ave": "commonwealth avenue"
+  },
+  "suffix_aliases": {
+    "st": "street",
+    "str": "street",
+    "ave": "avenue",
+    "av": "avenue",
+    "rd": "road",
+    "blvd": "boulevard",
+    "pkwy": "parkway",
+    "sq": "square",
+    "dr": "drive",
+    "ln": "lane",
+    "pl": "place",
+    "ter": "terrace",
+    "ct": "court",
+    "hwy": "highway"
+  },
+  "town_aliases": {
+    "boston": "Boston",
+    "south boston": "Boston",
+    "back bay": "Boston",
+    "brookline": "Brookline",
+    "somerville": "Somerville",
+    "cambridge": "Cambridge",
+    "arlington": "Arlington",
+    "palmer": "Palmer",
+    "chicopee": "Chicopee"
+  },
+  "streets": [
+    {
+      "name": "massachusetts avenue",
+      "town": "Boston",
+      "lat": 42.347,
+      "lng": -71.0874
+    },
+    {
+      "name": "massachusetts avenue",
+      "town": "Cambridge",
+      "lat": 42.3736,
+      "lng": -71.119
+    },
+    {
+      "name": "massachusetts avenue",
+      "town": "Arlington",
+      "lat": 42.4154,
+      "lng": -71.1565
+    },
+    {
+      "name": "boylston street",
+      "town": "Boston",
+      "lat": 42.347,
+      "lng": -71.0874
+    },
+    {
+      "name": "newbury street",
+      "town": "Boston",
+      "lat": 42.3485,
+      "lng": -71.0878
+    },
+    {
+      "name": "westland avenue",
+      "town": "Boston",
+      "lat": 42.3446,
+      "lng": -71.088
+    },
+    {
+      "name": "washington street",
+      "town": "Boston",
+      "lat": 42.3555,
+      "lng": -71.0605
+    },
+    {
+      "name": "washington street",
+      "town": "Brookline",
+      "lat": 42.3326,
+      "lng": -71.1166
+    },
+    {
+      "name": "washington street",
+      "town": "Somerville",
+      "lat": 42.3797,
+      "lng": -71.0934
+    },
+    {
+      "name": "main street",
+      "town": "Palmer",
+      "lat": 42.173,
+      "lng": -72.328
+    },
+    {
+      "name": "main street",
+      "town": "Chicopee",
+      "lat": 42.16,
+      "lng": -72.58
+    }
+  ],
+  "intersections": [
+    {
+      "street": "massachusetts avenue",
+      "cross_street": "boylston street",
+      "town": "Boston",
+      "lat": 42.347,
+      "lng": -71.0874
+    },
+    {
+      "street": "massachusetts avenue",
+      "cross_street": "newbury street",
+      "town": "Boston",
+      "lat": 42.3485,
+      "lng": -71.0878
+    },
+    {
+      "street": "massachusetts avenue",
+      "cross_street": "westland avenue",
+      "town": "Boston",
+      "lat": 42.3446,
+      "lng": -71.088
+    },
+    {
+      "street": "washington street",
+      "cross_street": "summer street",
+      "town": "Boston",
+      "lat": 42.3555,
+      "lng": -71.0605
+    }
+  ]
+}
