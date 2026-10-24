@@ -22,8 +22,9 @@ inclusion: always
 - The link node snapshots the incident before writing to the store, because novelty must compare the call against the incident as it was beforehand.
 
 ## LLM (Claude)
-- anthropic SDK. Models from env: CLAUDE_MODEL_EXTRACT, CLAUDE_MODEL_FAST. temperature 0.
-- Structured output only by forcing one tool (tool_choice set to that tool) and validating the tool input with Pydantic. Never parse free text.
+- anthropic SDK. Models from env: CLAUDE_MODEL_EXTRACT (default claude-sonnet-5-5), CLAUDE_MODEL_FAST (default claude-haiku-5-5).
+- Structured output only through one tool (a single strict tool per request) and validating the tool input with Pydantic. Never parse free text.
+- Sampling and tool choice follow the model: temperature 0 and a forced tool_choice where the model accepts them; Claude 5.x models reject temperature, and Claude Sonnet 5.5 rejects forced tool_choice, so it uses tool_choice auto with strict: true and thinking between_tools (llm/client.py model_profile).
 - Every LLM call has a 20-second timeout, one retry and a deterministic fallback. Failures never raise to the API caller.
 - Extraction cache: data/cache/extractions/<sha256 of transcript>.json. DEMO_MODE is cache_first or offline.
 - Prompt texts are in KIRO_PROMPTS.md Appendix A-D. Copy them verbatim into backend/app/llm/prompts.py.
@@ -41,6 +42,6 @@ inclusion: always
 
 ## Recorded deviations from KIRO_PROMPTS.md
 - Local interpreter is Python 3.13, not 3.11. No code depends on the difference.
-- CLAUDE_MODEL_EXTRACT defaults to claude-sonnet-4-5 and CLAUDE_MODEL_FAST to claude-haiku-4-5. The ids in KIRO_PROMPTS.md (claude-sonnet-5-5, claude-haiku-5-5) are not real Anthropic model ids.
+- README "temperature 0" and "forced tool" cannot hold on the README's own default models: per Anthropic's Claude Sonnet 5.5 and Haiku 5.5 migration guides, both reject temperature, and Sonnet 5.5 rejects a forced tool_choice. The client omits temperature on 5.x models and uses auto + strict on Sonnet 5.5. Determinism for the demo comes from the extraction cache.
 - requirements.txt adds langgraph (orchestration), websockets (uvicorn WebSocket support) and pytest-asyncio.
 - Lane A gains helper modules paths.py, ids.py, geo.py, text.py and reference.py. They hold no models and no settings.

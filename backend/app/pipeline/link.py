@@ -23,6 +23,7 @@ from datetime import datetime
 from typing import Mapping
 
 from app.contracts import (
+    MUTABLE_ATTRIBUTES,
     Band,
     IncidentType,
     LinkComponents,
@@ -30,7 +31,7 @@ from app.contracts import (
     RuntimeSettings,
     is_identifying,
 )
-from app.geo import haversine_m
+from app.geo import cell_for, cells_within, haversine_m
 from app.pipeline.locate import MIN_CONFIDENCE_FOR_AUTO_LINK
 
 ClaimKey = tuple[str, str]
@@ -157,10 +158,17 @@ def time_score(delta_minutes: float, window_min: float) -> float:
 def entity_score(call_values: ValuesByKey, incident_values: ValuesByKey) -> float | None:
     """Mean agreement over the ``(subject, attribute)`` keys both sides mention.
 
+    Mutable attributes (``suspect_location``, ``direction_of_travel``) are
+    excluded: a suspect who moved is not a different suspect.
+
     Returns None when they share no keys, so the component is dropped rather
     than scored as a disagreement.
     """
-    shared = [key for key in call_values if key in incident_values]
+    shared = [
+        key
+        for key in call_values
+        if key in incident_values and key[1] not in MUTABLE_ATTRIBUTES
+    ]
     if not shared:
         return None
 
@@ -252,23 +260,35 @@ def select_candidates(
 ) -> list[IncidentCandidate]:
     """Narrow open incidents to plausible matches before scoring.
 
-    Three regimes, per README:
+    Every regime first keeps only incidents inside the time window (doubled in
+    mass-event mode). Then, per README:
 
-    * **Located call** - incidents within radius R, H3 pre-filtered then
-      distance-checked exactly.
+    * **Located call** - incidents within radius R: H3 ``grid_disk`` with
+      ``k = ceil(R / 300) + 1`` as a prefilter, then exact haversine.
     * **Ambiguous location** - incidents sharing a candidate street name,
       restricted to the same PSAP when any such incident exists, because a call
       answered by the Boston centre is most likely in Boston.
     * **Unknown location** - incidents with a compatible type.
     """
+    window_s = settings.effective_window_min() * 60.0
+    in_window = [
+        candidate
+        for candidate in open_candidates
+        if abs((call.received_at - candidate.last_seen).total_seconds()) <= window_s
+    ]
+
     coords = call.location.coords()
 
     if coords is not None and not call.location.ambiguous:
         radius_m = radius_for(call.location, settings)
+        cells = cells_within(coords[0], coords[1], radius_m)
         within: list[IncidentCandidate] = []
-        for candidate in open_candidates:
+        for candidate in in_window:
             candidate_coords = candidate.location.coords()
             if candidate_coords is None:
+                continue
+            cell = candidate.location.h3 or cell_for(*candidate_coords)
+            if cell not in cells:
                 continue
             if haversine_m(coords, candidate_coords) <= radius_m:
                 within.append(candidate)
@@ -277,7 +297,7 @@ def select_candidates(
     if call.location.ambiguous:
         street_matches = [
             candidate
-            for candidate in open_candidates
+            for candidate in in_window
             if call.street_names & candidate.street_names
         ]
         same_psap = [c for c in street_matches if call.psap_id in c.psap_ids]
@@ -285,7 +305,7 @@ def select_candidates(
 
     return [
         candidate
-        for candidate in open_candidates
+        for candidate in in_window
         if not types_are_incompatible(call.incident_type, candidate.incident_type)
     ]
 

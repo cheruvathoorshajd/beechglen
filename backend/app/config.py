@@ -39,8 +39,8 @@ class Settings(BaseSettings):
     anthropic_api_key: str | None = None
     demo_mode: DemoMode = "cache_first"
 
-    claude_model_extract: str = "claude-sonnet-4-5"
-    claude_model_fast: str = "claude-haiku-4-5"
+    claude_model_extract: str = "claude-sonnet-5-5"
+    claude_model_fast: str = "claude-haiku-5-5"
 
     # Seed values for RuntimeSettings.
     auto_link_threshold: float = Field(default=0.85, ge=0.0, le=1.0)

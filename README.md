@@ -4,7 +4,7 @@
 
 Hackathon: `<name>` · Focus: Massachusetts · Built with Kiro · FastAPI · Claude · React
 
-**Live demo:** `<Cloud Run URL>` · **Demo video:** `<link>` · **Team:** `<A>`, `<B>`, `<C>`
+**Live demo:** `<Cloud Run URL>` · **Demo video:** `<link>` · **Team:** Dennis, Kaushik, Arvind
 
 ---
 

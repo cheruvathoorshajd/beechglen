@@ -197,7 +197,16 @@ def _resolve_landmark(
     device: tuple[float, float] | None,
     ref: ReferenceData,
 ) -> ResolvedLocation | None:
-    entry = ref.landmarks.match(mention.landmark, mention.raw)
+    # The landmark field is authoritative. The caller's raw location words are
+    # scanned only when no street or landmark was extracted, so a phrase such
+    # as "he ran toward Hynes" never relocates a call made from the store.
+    if mention.landmark:
+        texts: tuple[str | None, ...] = (mention.landmark,)
+    elif not (mention.street or mention.cross_street):
+        texts = (mention.raw,)
+    else:
+        texts = ()
+    entry = ref.landmarks.match(*texts)
     if entry is None:
         return None
     return _located(

@@ -10,6 +10,7 @@ coordinates"). Production would source MassGIS and MassDOT.
 from __future__ import annotations
 
 import json
+import re
 from dataclasses import dataclass, field
 from functools import lru_cache
 from pathlib import Path
@@ -132,10 +133,21 @@ class Gazetteer:
         self._streets = tuple(streets)
         self._intersections = tuple(intersections)
         self._suffix_aliases = dict(suffix_aliases)
+        self._suffix_words = frozenset(self._suffix_aliases.values())
         self._town_aliases = dict(town_aliases)
-        # Longest phrase first so "massachusetts ave" wins over "mass ave".
+        # Phrases are matched after suffix expansion and on whole words only,
+        # longest first, so "massachusetts avenue" is never rewritten into
+        # "massachusetts avenuenue" by the "massachusetts ave" alias.
+        expanded = {
+            self._expand_suffixes(normalize(phrase)): replacement
+            for phrase, replacement in phrase_aliases.items()
+        }
         self._phrase_aliases = tuple(
-            sorted(phrase_aliases.items(), key=lambda kv: len(kv[0]), reverse=True)
+            (re.compile(rf"\b{re.escape(phrase)}\b"), replacement)
+            for phrase, replacement in sorted(
+                expanded.items(), key=lambda kv: len(kv[0]), reverse=True
+            )
+            if phrase
         )
 
         by_name: dict[str, list[StreetEntry]] = {}
@@ -145,6 +157,25 @@ class Gazetteer:
 
     # -- normalization ------------------------------------------------------
 
+    def _expand_suffixes(self, name: str) -> str:
+        return " ".join(self._suffix_aliases.get(token, token) for token in name.split())
+
+    def _base(self, name: str) -> str:
+        """Street name without its trailing suffix word, if it has one."""
+        tokens = name.split()
+        if len(tokens) > 1 and tokens[-1] in self._suffix_words:
+            return " ".join(tokens[:-1])
+        return name
+
+    def _matches(self, query: str, full: str) -> bool:
+        """Exact canonical match, or a suffix-less query ("boylston") against
+        the base of a full name ("boylston street")."""
+        if not query:
+            return False
+        if query == full:
+            return True
+        return query == self._base(query) and self._base(full) == query
+
     def canonical_street(self, raw: str | None) -> str:
         """Canonical street name: ``"Mass Ave"`` -> ``"massachusetts avenue"``."""
         if not raw:
@@ -152,11 +183,10 @@ class Gazetteer:
         name = normalize(raw)
         if not name:
             return ""
-        for phrase, replacement in self._phrase_aliases:
-            if phrase in name:
-                name = name.replace(phrase, replacement)
-        expanded = [self._suffix_aliases.get(token, token) for token in name.split()]
-        return " ".join(expanded)
+        name = self._expand_suffixes(name)
+        for pattern, replacement in self._phrase_aliases:
+            name = pattern.sub(replacement, name)
+        return " ".join(name.split())
 
     def canonical_town(self, raw: str | None) -> str | None:
         """Canonical town name, or None when ``raw`` is empty/unknown."""
@@ -172,8 +202,18 @@ class Gazetteer:
     # -- lookups ------------------------------------------------------------
 
     def streets_named(self, street: str | None) -> tuple[StreetEntry, ...]:
-        """Every town that has a street by this name."""
-        return self._by_name.get(self.canonical_street(street), ())
+        """Every town that has a street by this name.
+
+        Falls back to suffix-less matching, so "Westland" finds
+        "westland avenue".
+        """
+        canonical = self.canonical_street(street)
+        if not canonical:
+            return ()
+        exact = self._by_name.get(canonical)
+        if exact:
+            return exact
+        return tuple(entry for entry in self._streets if self._matches(canonical, entry.name))
 
     def street_in_town(self, street: str | None, town: str | None) -> StreetEntry | None:
         canonical_town = self.canonical_town(town)
@@ -202,7 +242,9 @@ class Gazetteer:
         for entry in self._intersections:
             if canonical_town is not None and entry.town != canonical_town:
                 continue
-            if {entry.street, entry.cross_street} == {a, b}:
+            forward = self._matches(a, entry.street) and self._matches(b, entry.cross_street)
+            backward = self._matches(a, entry.cross_street) and self._matches(b, entry.street)
+            if forward or backward:
                 return entry
         return None
 
@@ -241,11 +283,12 @@ class HighwayTable:
             return None
         if key in self._route_aliases:
             return self._route_aliases[key]
-        # Tolerate extra words such as "the mass pike eastbound".
+        # Tolerate extra words such as "the mass pike eastbound", but only on
+        # whole words, so "I-290" never matches the "90" alias.
         for alias, route in sorted(
             self._route_aliases.items(), key=lambda kv: len(kv[0]), reverse=True
         ):
-            if alias in key.split() or alias in key:
+            if re.search(rf"\b{re.escape(alias)}\b", key):
                 return route
         upper = raw.strip().upper().replace(" ", "-")
         return upper if upper.startswith("I-") else None
@@ -256,8 +299,9 @@ class HighwayTable:
         return self._direction_aliases.get(normalize(raw))
 
     def by_exit(self, route: str, exit_number: str, old: bool) -> ExitEntry | None:
-        """Look up an exit by its old or new number."""
-        wanted = normalize(exit_number)
+        """Look up an exit by its old or new number ("63", "exit 63", "old exit 8")."""
+        words = re.sub(r"\b(old|new|exit|number|no)\b", " ", normalize(exit_number)).split()
+        wanted = words[0] if words else ""
         if not wanted:
             return None
         for entry in self._exits:
@@ -289,24 +333,29 @@ class LandmarkTable:
 
     def __init__(self, landmarks: list[LandmarkEntry]) -> None:
         self._landmarks = tuple(landmarks)
-        index: list[tuple[str, LandmarkEntry]] = []
+        index: list[tuple[str, re.Pattern[str], LandmarkEntry]] = []
         for entry in self._landmarks:
             for alias in (*entry.aliases, entry.name):
                 normalized = normalize(alias)
                 if normalized:
-                    index.append((normalized, entry))
+                    pattern = re.compile(rf"\b{re.escape(normalized)}\b")
+                    index.append((normalized, pattern, entry))
         # Longest alias first, so "hynes convention center" beats "hynes".
-        self._index = tuple(sorted(index, key=lambda pair: len(pair[0]), reverse=True))
+        self._index = tuple(sorted(index, key=lambda item: len(item[0]), reverse=True))
 
     def match(self, *texts: str | None) -> LandmarkEntry | None:
-        """First landmark whose alias appears in any of ``texts``."""
+        """First landmark whose alias appears as whole words in any of ``texts``.
+
+        Whole-word matching keeps short aliases such as "neu" from matching
+        inside unrelated words ("neurology").
+        """
         haystacks = [normalize(text) for text in texts if text]
         haystacks = [h for h in haystacks if h]
         if not haystacks:
             return None
-        for alias, entry in self._index:
+        for _alias, pattern, entry in self._index:
             for haystack in haystacks:
-                if alias == haystack or alias in haystack:
+                if pattern.search(haystack):
                     return entry
         return None
 

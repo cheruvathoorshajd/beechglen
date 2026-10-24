@@ -54,6 +54,8 @@ The terminal tool times out on slow commands and garbles long or multi-line ones
 | D11 | Timeline entries use simulated time; audit entries use wall-clock UTC. | Audit must be real time. |
 | D12 | Scenario JSON is authored directly from the 0.3 prompt (rules followed exactly). The extraction cache is precomputed with the real API, then checked by scenario tests; clearly wrong cache entries may be fixed by hand (playbook I2). | Playbook 0.3 and I2. |
 | D13 | Frontend scaffolded by writing files (create-vite prompts interactively): React 18, react-leaflet 4, Leaflet 1.9, Tailwind 3, Zustand, react-router-dom 6, Vite. Smoke tests with vitest + testing-library (dev dependencies only). | tech.md stack; no interactive prompts. |
+| D14 | `llm/client.py` `model_profile()` picks request settings per model. Sonnet 5.5: `tool_choice auto` + `strict: true` + `thinking between_tools`, no temperature. Haiku 5.5: forced tool, no temperature. 4.x models: forced tool + temperature 0. All tools are sent `strict: true`; `llm/schema.tool_schema()` makes schemas strict-compatible (refs inlined, all properties required, `additionalProperties: false`, no min/max/default). | Anthropic Sonnet 5.5 and Haiku 5.5 migration guides: 5.x models reject temperature; Sonnet 5.5 rejects forced tool_choice; strict mode allows at most 24 optional params. |
+| D15 | Gazetteer fixes found while testing: phrase aliases match whole words after suffix expansion ("Massachusetts Avenue" used to become "massachusetts avenuenue"); suffix-less names ("Boylston") match "boylston street"; route aliases match whole words ("I-290" no longer maps to I-90); exit text like "exit 63" parses; landmark aliases match whole words and the raw location text is scanned only when no street or landmark was extracted ("ran toward Hynes" no longer relocates a store call to the station). | Each one broke a demo scenario path. |
 
 ## Build state
 
@@ -70,18 +72,18 @@ scripts, scenarios, cache, frontend, Dockerfile, tests).
 
 | # | Issue | Status |
 |---|---|---|
-| R1 | `llm/client.py` `call_tool` has no body | open |
+| R1 | `llm/client.py` `call_tool` has no body | fixed (stage 1, D14) |
 | R2 | flow/ and context.py referenced but missing; design.md cites a missing "Design corrections" section | open (stage 5, stage 11) |
-| R3 | config.py model defaults 4.5 instead of README 5.5; wrong tech.md note | open |
-| R4 | `extra="forbid"` on Extraction conflicts with fail-open parsing | open (sanitizer) |
-| R5 | link.py: mutable attrs in entity score, no time window, no H3 prefilter | open |
+| R3 | config.py model defaults 4.5 instead of README 5.5; wrong tech.md note | fixed (stage 1); tech.md now records the real 5.x API constraints |
+| R4 | `extra="forbid"` on Extraction conflicts with fail-open parsing | fixed (stage 1): `llm/schema.sanitize()`; extract.py must call it (stage 4) |
+| R5 | link.py: mutable attrs in entity score, no time window, no H3 prefilter | fixed (stage 1) |
 | R6 | `.env.example` was gitignored and missing | fixed (stage 0) |
-| R7 | README lost team names (Dennis, Kaushik, Arvind) from commit b36af56 | open |
+| R7 | README lost team names (Dennis, Kaushik, Arvind) from commit b36af56 | fixed (stage 1): header line only; lane owners stay `<A>/<B>/<C>` (mapping unknown) |
 
 ## Stage checklist
 
 - [x] Stage 0: fresh venv + deps, `.kiro/logs/` ignored, `.env.example`, context.md, steering pointer
-- [ ] Stage 1: review fixes R1, R3, R4 (sanitizer), R5, R7 + tests for locate, link, client, sanitizer
+- [x] Stage 1: review fixes R1, R3, R4 (sanitizer), R5, R7 + tests for locate, link, client, sanitizer
 - [ ] Stage 2: scenario data `data/scenarios/{mass_ave_robbery,pike_crash,washington_st}.json` (playbook 0.3)
 - [ ] Stage 3: `pipeline/weigh.py`, `priority.py`, `dispatch.py` + tests (A-5..A-7)
 - [ ] Stage 4: `llm/prompts.py` (Appendix A-D verbatim), `pipeline/extract.py`, `pipeline/verify.py` + tests (B-1..B-3)
@@ -99,6 +101,12 @@ scripts, scenarios, cache, frontend, Dockerfile, tests).
 
 - Stage 0: `import fastapi, h3, langgraph, anthropic, pytest` → `.kiro/logs/import-check.txt` = ok. Versions in `.kiro/logs/pip-list.txt`: fastapi 0.119.1, uvicorn 0.39.0, pydantic 2.14.1, pydantic-settings 2.16.1, networkx 3.7, h3 4.5.0, langgraph 0.6.11, anthropic 0.125.0, httpx 0.28.1, pytest 8.4.2.
 
+- Stage 1: `.venv/bin/python -m pytest > .kiro/logs/pytest-stage1.txt` → 60 passed (test_locate, test_link, test_llm_client, test_schema). Note: pytest.ini already passes `-q`; adding another `-q` hides the summary line.
+
+## Test conventions
+
+- `backend/tests/conftest.py` forces `DEMO_MODE=offline` and a blank `ANTHROPIC_API_KEY` before any app import, and resets settings and runtime thresholds around every test. No test touches the network.
+
 ## Next step
 
-Stage 1: review fixes, starting with R3 (config.py model defaults and the tech.md note).
+Stage 2: write `data/scenarios/mass_ave_robbery.json`, `pike_crash.json`, `washington_st.json` exactly per KIRO_PROMPTS.md 0.3, then run the 0.3 validation one-liner.
