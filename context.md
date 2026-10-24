@@ -89,7 +89,7 @@ scripts, scenarios, cache, frontend, Dockerfile, tests).
 - [x] Stage 2: scenario data `data/scenarios/{mass_ave_robbery,pike_crash,washington_st}.json` (playbook 0.3); rules locked by `test_scenario_data.py`
 - [x] Stage 3: `pipeline/weigh.py`, `priority.py`, `dispatch.py` + tests (A-5..A-7)
 - [x] Stage 4: `llm/prompts.py` (Appendix A-D verbatim), `pipeline/extract.py`, `pipeline/verify.py` + tests (B-1..B-3)
-- [ ] Stage 5: `flow/`, `context.py`, `graph/views.py`, store additions + flow test (A-8)
+- [x] Stage 5: `flow/`, `context.py`, `graph/views.py`, store additions + flow test (A-8)
 - [ ] Stage 6: `realtime/bus.py`, `api/routes_*.py`, `main.py`, `run.py`, `llm/assist.py` (ask-next, briefing), `sim/replay.py` + API tests (B-4..B-7)
 - [ ] Stage 7: `scripts/precompute_extractions.py`, `scripts/evaluate.py`; run precompute (I2); `test_scenarios.py` (I4); evaluation table in README (P1)
 - [ ] Stage 8: frontend (0.6, 0.7, C-1..C-7, I3, P2) + build + smoke tests + mock/contract check
@@ -111,6 +111,8 @@ scripts, scenarios, cache, frontend, Dockerfile, tests).
 
 - Stage 4: full suite → `.kiro/logs/pytest-stage4.txt` = 131 passed (adds test_verify, test_extract, test_prompts; prompts match KIRO_PROMPTS.md verbatim).
 
+- Stage 5: full suite → `.kiro/logs/pytest-stage5.txt` = 139 passed (adds test_flow: duplicates, new weapon, fire gate, split, ambiguous suggest + confirm, Pike exits/transfer/injury, fail-open extraction, reset).
+
 ## Module interfaces built so far
 
 - `pipeline.extract`: `Extractor(tool_caller=None, settings=get_settings, cache_dir=EXTRACTION_CACHE_DIR)`; `extractor(call) -> Extraction` (role hint applied), `.extract_raw(call)`, `.precompute(call) -> "cached"|"extracted"|"failed"`; module `extract(call)`. Cache file JSON = `{transcript, channel, model, extraction}`.
@@ -120,6 +122,12 @@ scripts, scenarios, cache, frontend, Dockerfile, tests).
 - `pipeline.priority`: `severity`, `IncidentSnapshot.build`, `novelty`, `override_reasons`, `priority`, `to_display`, `queue_order`.
 - `pipeline.dispatch`: `CallFacts`, `ClaimRef`, `build_package`, `is_dispatch_ready`, `suggest_leads -> [LeadSuggestion(key, description, source_claim_ids)]`.
 - `llm.client.call_tool(...)`, `llm.schema.tool_schema/sanitize`, `llm.prompts.*_SYSTEM/*_TOOL/MISSING_RULES/AGENT_*`.
+- `context.AppContext.create(extract=..., ground=...)` → `.store`, `.audit`, `.lock` (RLock), `.runner`, `.views`; `.reset()` clears graph + audit, keeps runtime settings.
+- `flow.runner.FlowRunner`: `process_call(CallIn) -> ProcessResult` (intake graph unlocked, commit graph under lock; naive times treated as UTC), `confirm_link(call_id)`, `split_call(call_id)`; both raise `LinkActionError` (→ 409) when not applicable.
+- `flow.ops`: `refresh_header`, `reweigh`, `refresh_dispatch`, `recompute_incident`, `sim_now` (latest call time).
+- `graph.views.GraphViews`: `queue()`, `incidents()`, `incident_detail(id)`, `call_detail(id)`, `explain(call_id)`, `metrics()`, `create_lead(...)` (status open, audited officer), `update_lead(...)`; raise `NotFoundError` (→ 404).
+- Store: ids come from a per-store `IdGenerator` (`store.new_id(kind)`): `c-0001`, `inc-0001`, `clm-0001`, `lead-0001`; reset restarts them. Audit ids `aud-0001`.
+- Audit actions: `link.decided` (system), `priority.override` (system), `link.confirmed` / `link.split` (operator), `lead.created` / `lead.updated` (officer).
 
 ## Scenario data notes
 
@@ -131,4 +139,4 @@ scripts, scenarios, cache, frontend, Dockerfile, tests).
 
 ## Next step
 
-Stage 5: orchestration. `flow/state.py` (CallFlowState TypedDict), `flow/nodes/` (one factory per stage: extract, verify, locate, link, weigh, prioritize, dispatch), `flow/builder.py` (intake graph extract→verify; commit graph locate→…→dispatch), `flow/runner.py` (`FlowRunner.process_call/confirm_link/split_call`, commit under `AppContext.lock`), `context.py` (AppContext), `graph/views.py` (queue, incidents, incident_detail, call_detail, explain, metrics, create_lead, update_lead), store additions (consensus on incident, lead upsert by key) + `test_flow.py` with hand-built extractions.
+Stage 6: transport. `realtime/bus.py` (thread-safe EventBus + `/ws/dashboard` router), `llm/assist.py` (ask-next and briefing: Claude via CLAUDE_MODEL_FAST, cache keyed by (id, incident last_seen), Appendix B/C template fallbacks, missing rules, plain labels), `sim/replay.py` (simulated clock thread), `api/routes_calls.py`, `routes_incidents.py`, `routes_links.py`, `routes_leads.py`, `routes_settings.py` (settings, metrics, audit), `routes_sim.py` (start, stop, reset), `main.py` (lifespan builds AppContext, CORS, SPA fallback), `run.py`; extend AppContext with bus, assist, replay. Then `test_api.py` (TestClient, fake extractor) and a background `run.py` smoke check against `/docs`.
