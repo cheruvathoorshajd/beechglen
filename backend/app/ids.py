@@ -1,8 +1,9 @@
 """Identifier generation.
 
 Sequential, prefixed identifiers keep logs, audit entries and test assertions
-readable. The counters are process-local and reset with the graph, which is
-exactly the lifetime of the in-memory store.
+readable. Each GraphStore and AuditLog owns its own :class:`IdGenerator`, so
+counters reset with the store they belong to and two stores in one process
+(tests, the evaluation script) never hand out colliding ids.
 """
 
 from __future__ import annotations
@@ -18,20 +19,21 @@ _PREFIXES = {
     "audit": "aud",
 }
 
-_lock = threading.Lock()
-_counters: defaultdict[str, int] = defaultdict(int)
 
+class IdGenerator:
+    """Thread-safe per-kind counters: ``inc-0001``, ``inc-0002``..."""
 
-def next_id(kind: str) -> str:
-    """Return the next identifier for ``kind``, e.g. ``inc-0003``."""
-    prefix = _PREFIXES.get(kind, kind)
-    with _lock:
-        _counters[kind] += 1
-        number = _counters[kind]
-    return f"{prefix}-{number:04d}"
+    def __init__(self) -> None:
+        self._lock = threading.Lock()
+        self._counters: defaultdict[str, int] = defaultdict(int)
 
+    def next(self, kind: str) -> str:
+        prefix = _PREFIXES.get(kind, kind)
+        with self._lock:
+            self._counters[kind] += 1
+            number = self._counters[kind]
+        return f"{prefix}-{number:04d}"
 
-def reset_ids() -> None:
-    """Restart every counter. Called when the graph is reset."""
-    with _lock:
-        _counters.clear()
+    def reset(self) -> None:
+        with self._lock:
+            self._counters.clear()

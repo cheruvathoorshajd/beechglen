@@ -38,7 +38,7 @@ from app.contracts import (
     TimelineEntry,
     TransferRecord,
 )
-from app.ids import next_id, reset_ids
+from app.ids import IdGenerator
 
 
 class NodeKind(StrEnum):
@@ -143,6 +143,7 @@ class GraphStore:
 
     def __init__(self) -> None:
         self._lock = threading.RLock()
+        self._ids = IdGenerator()
         self._graph = nx.MultiDiGraph()
         self._calls: dict[str, StoredCall] = {}
         self._incidents: dict[str, StoredIncident] = {}
@@ -163,7 +164,11 @@ class GraphStore:
             self._leads.clear()
             self._lead_keys.clear()
             self._transfers.clear()
-            reset_ids()
+            self._ids.reset()
+
+    def new_id(self, kind: str) -> str:
+        """Next identifier of ``kind`` (``call``, ``incident``, ``claim``, ``lead``)."""
+        return self._ids.next(kind)
 
     # -- calls --------------------------------------------------------------
 
@@ -175,7 +180,7 @@ class GraphStore:
     ) -> StoredCall:
         """Insert a ``Call`` node (plus its PSAP transfer edge) and return it."""
         with self._lock:
-            call_id = next_id("call")
+            call_id = self.new_id("call")
             stored = StoredCall(
                 id=call_id, payload=payload, extraction=extraction, location=location
             )
@@ -327,7 +332,7 @@ class GraphStore:
     ) -> StoredIncident:
         """Insert an ``Incident`` node and its ``AT`` location edge."""
         with self._lock:
-            incident_id = next_id("incident")
+            incident_id = self.new_id("incident")
             incident = StoredIncident(
                 id=incident_id,
                 type=incident_type,
@@ -574,7 +579,7 @@ class GraphStore:
         with self._lock:
             self.require_incident(incident_id)
             lead = Lead(
-                id=next_id("lead"),
+                id=self.new_id("lead"),
                 incident_id=incident_id,
                 description=description,
                 status=status,

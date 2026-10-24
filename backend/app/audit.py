@@ -11,7 +11,7 @@ from datetime import datetime, timezone
 from typing import Any
 
 from app.contracts import Actor, AuditEvent
-from app.ids import next_id
+from app.ids import IdGenerator
 
 
 class AuditLog:
@@ -19,6 +19,7 @@ class AuditLog:
 
     def __init__(self) -> None:
         self._lock = threading.RLock()
+        self._ids = IdGenerator()
         self._events: list[AuditEvent] = []
 
     def log(
@@ -33,7 +34,7 @@ class AuditLog:
     ) -> AuditEvent:
         """Append one entry and return it."""
         event = AuditEvent(
-            id=next_id("audit"),
+            id=self._ids.next("audit"),
             ts=ts or datetime.now(timezone.utc),
             actor=actor,
             action=action,
@@ -61,3 +62,4 @@ class AuditLog:
         """Clear the log. Only used by ``POST /api/reset`` and tests."""
         with self._lock:
             self._events.clear()
+            self._ids.reset()

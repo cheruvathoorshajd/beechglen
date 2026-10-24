@@ -10,7 +10,6 @@ from app.contracts import Claim, LinkDecision
 from app.flow import ops
 from app.flow.deps import FlowDeps
 from app.flow.state import CallFlowState
-from app.ids import next_id
 from app.pipeline import link as linking
 from app.pipeline.priority import severity
 
@@ -35,7 +34,7 @@ def make_link_node(deps: FlowDeps):
         stored = store.add_call(call, extraction, location)
         claims = [
             Claim(
-                id=next_id("claim"),
+                id=store.new_id("claim"),
                 call_id=stored.id,
                 subject=item.subject,
                 attribute=item.attribute,
