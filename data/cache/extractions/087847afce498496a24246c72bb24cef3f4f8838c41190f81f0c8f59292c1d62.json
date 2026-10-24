@@ -1,0 +1,65 @@
+{
+  "transcript": "I'm at Mass Ave and Boylston right now. A man in a red hoodie just smashed a car window and ran toward Symphony station. Check 1792881170.",
+  "channel": "voice",
+  "model": "claude-sonnet-5-5",
+  "extraction": {
+    "language": "en",
+    "incident_type": "other",
+    "caller_role": "witness",
+    "flags": {
+      "weapon_present": false,
+      "injuries_reported": false,
+      "not_breathing": false,
+      "fire_or_smoke": false,
+      "trapped": false,
+      "child_involved": false
+    },
+    "location": {
+      "street": "Mass Ave",
+      "cross_street": "Boylston",
+      "town": null,
+      "landmark": null,
+      "highway_route": null,
+      "highway_direction": null,
+      "highway_exit": null,
+      "exit_is_old": null,
+      "mile_marker": null,
+      "raw": "Mass Ave and Boylston"
+    },
+    "claims": [
+      {
+        "subject": "suspect",
+        "attribute": "upper_clothing_color",
+        "value": "red",
+        "quote": "A man in a red hoodie",
+        "first_hand": true,
+        "confidence": 0.95
+      },
+      {
+        "subject": "suspect",
+        "attribute": "upper_clothing_type",
+        "value": "hoodie",
+        "quote": "A man in a red hoodie",
+        "first_hand": true,
+        "confidence": 0.95
+      },
+      {
+        "subject": "suspect",
+        "attribute": "sex",
+        "value": "male",
+        "quote": "A man in a red hoodie",
+        "first_hand": true,
+        "confidence": 0.95
+      },
+      {
+        "subject": "suspect",
+        "attribute": "direction_of_travel",
+        "value": "toward symphony station",
+        "quote": "ran toward Symphony station",
+        "first_hand": true,
+        "confidence": 0.9
+      }
+    ],
+    "summary": "Man in red hoodie smashed a car window at Mass Ave and Boylston, fled toward Symphony station."
+  }
+}
