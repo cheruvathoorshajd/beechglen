@@ -90,7 +90,7 @@ Stage 8 (frontend) follows `KIRO_DESIGN_PROMPTS.md` section 2. Sources: `.kiro/s
 ### Design checklist
 
 - [x] D1 Foundations: README "Frontend" + tech.md frontend section; font packages; tokens + base styles (body, :focus-visible, text-wrap: balance, reduced motion); primitives in `src/ui/` (Wordmark, Button, Badge, Tag, SpecLabel, ConfidenceBar, Field, Segmented, ChoiceCard, Disc, Bloom, LiveDot, Icon); remove off-palette colors.
-- [ ] D2 Console: every C1 task (data layer, mocks, shell, queue + map, incident panel + Why linked, ask-next + dispatch, officer, sim) built in the "Console mapping" style; Wordmark in the top bar; Vitest for priority pill thresholds and the Critical badge word.
+- [x] D2 Console: every C1 task (data layer, mocks, shell, queue + map, incident panel + Why linked, ask-next + dispatch, officer, sim) built in the "Console mapping" style; Wordmark in the top bar; Vitest for priority pill thresholds and the Critical badge word.
 - [ ] D3 Landing at `/` (V2_SCREENS.md); console default `/operator`; CTAs go to `/operator` until D4.
 - [ ] D4 Session module, route guard, sign-in, console header (who chip, Replay intro, Sign out); Vitest for session.ts (incl. throwing storage), guard redirects, name validation.
 - [ ] D5 Onboarding wizard; Vitest for Escape skipping, focus to each heading, server-down state.
@@ -100,7 +100,14 @@ Stage 8 (frontend) follows `KIRO_DESIGN_PROMPTS.md` section 2. Sources: `.kiro/s
 
 - D1 done: `@fontsource-variable/fraunces`, `@fontsource/ibm-plex-sans`, `@fontsource/ibm-plex-mono` 5.3.0 (pinned). Fraunces uses `opsz.css` + `opsz-italic.css` (family "Fraunces Variable", wght 100–900); Plex uses `latin-*` files. Tokens in `src/index.css` (adds `--brand-glow` .30 for the bloom, `--warn-rule`/`--warn-tint` for the prototype notice, `--ground-veil` for the wizard footer), mirrored in `tailwind.config.js` (`rounded` = 3px, `rounded-pill`). Primitives in `src/ui/index.tsx` + `src/ui/Icon.tsx`, styles in `src/ui/ui.css` (imported in main.tsx). Also: `Contested`, `buttonClass()`, `formatShare()`, `nextIndex()` (roving radiogroup keys). No off-palette code existed yet (frontend had only `types.ts`). `src/App.tsx` is a D1 placeholder replaced in D2. Verify: `.kiro/logs/fe-d1.txt` build ✓, Vitest 6/6.
 - Frontend commands (repo root): build+test in background `(cd frontend && npm run build > ../.kiro/logs/fe-dN.txt 2>&1 && npx vitest run >> ../.kiro/logs/fe-dN.txt 2>&1; echo "exit=$?" >> ../.kiro/logs/fe-dN.txt) &`, then the wait line.
-- Next: D2 console.
+- D2 done (all C1 tasks built in the new style, so nothing gets restyled later):
+  - Mocks (0.7): `scripts/export_mocks.py` writes `frontend/src/mocks/*.json` (10 files) from a real offline replay; `backend/tests/test_frontend_mocks.py` validates them against contracts.py (11 tests). Regenerate after contract changes. The robbery incident mock gets one injected transfer (cambridge-ecc) so the banner shows in mock mode.
+  - Data layer: `src/api/client.ts` (every README endpoint; `VITE_USE_MOCKS=true` → dynamic-imported mocks; Vitest sets it via `test.env`), `src/store.ts` (Zustand; `refresh()` collapses bursts), `src/hooks/useDashboardSocket.ts` (reconnect backoff, NEW INFO toasts from `override_reasons`), `src/hooks/useFocusTrap.ts`, `src/lib/format.ts` (reason/gate words, T+, priority tone, Critical = severity ≥ 0.9).
+  - Components in `src/components/console/`: `chips.tsx` (PriorityPill, BandChip, CriticalBadge, NewInfoBadge), `QueueCard.tsx`, `IncidentMap.tsx` (react-leaflet, CSS-classed markers), `evidence.tsx` (ConsensusBars, Contradictions, TransferBanner, DispatchPackageCard), `IncidentPanel.tsx` (+ Confirm/Split), `WhyLinkedModal.tsx`, `AskNextPanel.tsx`, `officer.tsx` (BriefingCard, LeadsBoard), `shell.tsx` (TopBar with Wordmark, Toasts, MetricsPanel, ConsoleLayout), `console.css` (Leaflet dark filter, markers, first-in-queue flash). Pages in `src/pages/` (Operator, Officer, Sim).
+  - Decision: queue cards use the call's own severity for Critical (else every robbery duplicate would be Critical, since the incident is 0.9); incident cards use incident severity.
+  - P2 polish included: first-in-queue highlight, NEW INFO toasts with reasons, /operator panels scroll inside a full-height grid, gates in plain words.
+  - `/` redirects to `/operator` until D3. Verify: `.kiro/logs/fe-d2.txt` build ✓, Vitest 17/17 (priority thresholds, Critical word, three pages render from mocks with the map stubbed).
+- Next: D3 landing.
 
 ## Build state
 

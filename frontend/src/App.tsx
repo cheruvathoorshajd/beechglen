@@ -1,11 +1,39 @@
-import { Wordmark, SpecLabel } from "./ui";
+import { Navigate, Route, Routes } from "react-router-dom";
+import { ConsoleLayout } from "./components/console/shell";
+import Operator from "./pages/Operator";
+import Officer from "./pages/Officer";
+import Sim from "./pages/Sim";
+import "./components/console/console.css";
 
-// D1 placeholder: the console routes arrive in D2, the landing in D3.
 export default function App() {
   return (
-    <main className="grid min-h-full place-items-center gap-6 p-12">
-      <Wordmark />
-      <SpecLabel k="Console" rest={["Coming in D2"]} />
-    </main>
+    <Routes>
+      <Route path="/" element={<Navigate to="/operator" replace />} />
+      <Route
+        path="/operator"
+        element={
+          <ConsoleLayout>
+            <Operator />
+          </ConsoleLayout>
+        }
+      />
+      <Route
+        path="/officer"
+        element={
+          <ConsoleLayout>
+            <Officer />
+          </ConsoleLayout>
+        }
+      />
+      <Route
+        path="/sim"
+        element={
+          <ConsoleLayout>
+            <Sim />
+          </ConsoleLayout>
+        }
+      />
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
   );
 }

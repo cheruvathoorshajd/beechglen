@@ -1,0 +1,13 @@
+{
+  "auto_link_threshold": 0.85,
+  "suggest_threshold": 0.5,
+  "time_window_min": 30,
+  "mass_event_mode": false,
+  "radius_m": {
+    "highway": 2000,
+    "landmark": 400,
+    "intersection": 400,
+    "street": 600,
+    "device": 600
+  }
+}

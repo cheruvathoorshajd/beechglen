@@ -1,0 +1,149 @@
+[
+  {
+    "call_id": "c-0012",
+    "incident_id": "inc-0002",
+    "received_at": "2026-10-24T14:12:00-04:00",
+    "priority": 100,
+    "band": "new",
+    "p_same": 0.49,
+    "novelty": 1.0,
+    "severity": 1.0,
+    "new_info": true,
+    "override_reasons": [
+      "new_incident"
+    ],
+    "summary": "Smoke pouring from a third-floor window on Westland Ave; caller hears trapped people screaming inside.",
+    "language": "en",
+    "channel": "voice",
+    "caller_role": "witness",
+    "location_label": "Westland Ave, Boston"
+  },
+  {
+    "call_id": "c-0015",
+    "incident_id": "inc-0003",
+    "received_at": "2026-10-24T08:00:55-04:00",
+    "priority": 90,
+    "band": "auto",
+    "p_same": 0.9965,
+    "novelty": 0.1667,
+    "severity": 0.85,
+    "new_info": true,
+    "override_reasons": [
+      "new_injury"
+    ],
+    "summary": "Caller stopped at crash between silver SUV and red pickup on Pike eastbound near Palmer; pickup driver not moving.",
+    "language": "en",
+    "channel": "voice",
+    "caller_role": "witness",
+    "location_label": "I-90 EB Exit 63 (old Exit 8), Palmer"
+  },
+  {
+    "call_id": "c-0001",
+    "incident_id": "inc-0001",
+    "received_at": "2026-10-24T14:00:00-04:00",
+    "priority": 90,
+    "band": "new",
+    "p_same": 0.0,
+    "novelty": 1.0,
+    "severity": 0.9,
+    "new_info": true,
+    "override_reasons": [
+      "new_incident"
+    ],
+    "summary": "Convenience store clerk reports armed robbery; man in white jacket and jeans took register cash and fled toward Hynes station.",
+    "language": "en",
+    "channel": "voice",
+    "caller_role": "victim",
+    "location_label": "Massachusetts Ave & Boylston St, Boston"
+  },
+  {
+    "call_id": "c-0010",
+    "incident_id": "inc-0001",
+    "received_at": "2026-10-24T14:06:00-04:00",
+    "priority": 90,
+    "band": "auto",
+    "p_same": 0.8915,
+    "novelty": 0.6667,
+    "severity": 0.9,
+    "new_info": true,
+    "override_reasons": [
+      "new_weapon",
+      "new_location"
+    ],
+    "summary": "Man from a store pulled a knife on someone and is pointing it at people at Mass Ave and Newbury.",
+    "language": "en",
+    "channel": "voice",
+    "caller_role": "witness",
+    "location_label": "Massachusetts Ave & Newbury St, Boston"
+  },
+  {
+    "call_id": "c-0027",
+    "incident_id": "inc-0004",
+    "received_at": "2026-10-24T22:02:00-04:00",
+    "priority": 90,
+    "band": "suggest",
+    "p_same": 0.963,
+    "novelty": 1.0,
+    "severity": 0.9,
+    "new_info": true,
+    "override_reasons": [
+      "new_weapon"
+    ],
+    "summary": "Caller walking past a fight on Washington Street; one man holds a bottle. Caller staying back.",
+    "language": "en",
+    "channel": "voice",
+    "caller_role": "bystander",
+    "location_label": "Washington St"
+  },
+  {
+    "call_id": "c-0002",
+    "incident_id": "inc-0001",
+    "received_at": "2026-10-24T14:00:40-04:00",
+    "priority": 13,
+    "band": "confirmed",
+    "p_same": 0.8544,
+    "novelty": 0.3333,
+    "severity": 0.3,
+    "new_info": false,
+    "override_reasons": [],
+    "summary": "Caller outside a store at Mass Ave and Boylston saw a thin man in a white jacket run out toward Newbury.",
+    "language": "en",
+    "channel": "voice",
+    "caller_role": "witness",
+    "location_label": "Massachusetts Ave & Boylston St, Boston"
+  },
+  {
+    "call_id": "c-0004",
+    "incident_id": "inc-0001",
+    "received_at": "2026-10-24T14:01:40-04:00",
+    "priority": 9,
+    "band": "auto",
+    "p_same": 0.8558,
+    "novelty": 0.2,
+    "severity": 0.3,
+    "new_info": false,
+    "override_reasons": [],
+    "summary": "Caller at a store at Mass Ave and Boylston saw a man in a white jacket run toward the station.",
+    "language": "es",
+    "channel": "voice",
+    "caller_role": "witness",
+    "location_label": "Massachusetts Ave & Boylston St, Boston"
+  },
+  {
+    "call_id": "c-0018",
+    "incident_id": "inc-0003",
+    "received_at": "2026-10-24T08:02:20-04:00",
+    "priority": 0,
+    "band": "auto",
+    "p_same": 0.9958,
+    "novelty": 0.0,
+    "severity": 0.6,
+    "new_info": false,
+    "override_reasons": [],
+    "summary": "Crash between a white SUV and a red pickup, stopped in the lane on the Pike eastbound near Palmer.",
+    "language": "pt",
+    "channel": "voice",
+    "caller_role": "witness",
+    "location_label": "I-90 EB Exit 63 (old Exit 8), Palmer"
+  }
+]

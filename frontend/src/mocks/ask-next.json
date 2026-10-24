@@ -1,0 +1,8 @@
+{
+  "confirm_line": "We have a report near Washington St. Are you there now?",
+  "questions": [
+    "Which town are you in?",
+    "Can you describe anything they were carrying?",
+    "What is happening right now?"
+  ]
+}

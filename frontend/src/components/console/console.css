@@ -1,0 +1,71 @@
+/* Console styles Tailwind can't express: Leaflet overrides and the first-in-queue highlight. */
+
+/* Darken OpenStreetMap tiles. Offline, tiles simply don't load. */
+.leaflet-container {
+  background: var(--card);
+  font-family: var(--sans);
+}
+.leaflet-tile-pane {
+  filter: grayscale(1) invert(1) brightness(0.62) contrast(0.92);
+}
+.leaflet-control-zoom a,
+.leaflet-bar a {
+  background: var(--card);
+  color: var(--ink);
+  border-color: var(--rule);
+}
+.leaflet-control-zoom a:hover {
+  background: var(--raised);
+}
+.leaflet-control-attribution {
+  background: var(--ground-veil) !important;
+  color: var(--ink-soft);
+}
+.leaflet-control-attribution a {
+  color: var(--ink);
+}
+.leaflet-tooltip {
+  background: var(--card);
+  color: var(--ink);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  font-family: var(--mono);
+  font-size: 11px;
+  box-shadow: none;
+}
+.leaflet-tooltip-top::before {
+  border-top-color: var(--rule);
+}
+
+/* Markers: crimson 80+, warn 50-79, grey below 50; white ring when selected. */
+.mk {
+  stroke: var(--ground);
+  stroke-width: 2;
+  fill-opacity: 0.9;
+  cursor: pointer;
+}
+.mk-high {
+  fill: var(--brand);
+}
+.mk-mid {
+  fill: var(--warn);
+}
+.mk-low {
+  fill: var(--ink-soft);
+}
+.mk-selected {
+  stroke: var(--ink);
+  stroke-width: 3;
+}
+
+/* A card that just became first in the queue gets a brief halo. */
+.queue-card.flash {
+  animation: first 1.4s var(--ease);
+}
+@keyframes first {
+  0%,
+  40% {
+    box-shadow: 0 0 0 3px var(--brand-tint);
+    border-color: var(--brand);
+  }
+}

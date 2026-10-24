@@ -1,15 +1,11 @@
 import { fireEvent, render, screen } from "@testing-library/react";
-import { MemoryRouter } from "react-router-dom";
 import { useState } from "react";
+import { renderAt } from "../test/render";
 import { Badge, ConfidenceBar, Field, Segmented, SpecLabel, Wordmark, nextIndex } from "./index";
 
 describe("primitives", () => {
   it("wordmark reads NEXUS 911", () => {
-    render(
-      <MemoryRouter>
-        <Wordmark to="/" />
-      </MemoryRouter>,
-    );
+    renderAt("/", <Wordmark to="/" />);
     expect(screen.getByRole("link", { name: "Nexus911 home" }).textContent).toBe("Nexus911");
   });
 

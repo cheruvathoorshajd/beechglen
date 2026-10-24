@@ -1,0 +1,138 @@
+{
+  "call": {
+    "transcript": "I'm at Mass Ave and Newbury. The guy from the store just pulled a knife on someone here. He's pointing the knife at people.",
+    "channel": "voice",
+    "received_at": "2026-10-24T14:06:00-04:00",
+    "caller_hash": "mar-10",
+    "caller_role_hint": "witness",
+    "device_lat": 42.3485,
+    "device_lng": -71.0878,
+    "psap_id": "boston-ecc",
+    "transferred_from": null,
+    "scenario_id": "mass_ave_robbery",
+    "truth_incident": "A",
+    "truth_new_info": true
+  },
+  "extraction": {
+    "language": "en",
+    "incident_type": "assault",
+    "caller_role": "witness",
+    "flags": {
+      "weapon_present": true,
+      "injuries_reported": false,
+      "not_breathing": false,
+      "fire_or_smoke": false,
+      "trapped": false,
+      "child_involved": false
+    },
+    "location": {
+      "street": "Mass Ave",
+      "cross_street": "Newbury",
+      "town": null,
+      "landmark": null,
+      "highway_route": null,
+      "highway_direction": null,
+      "highway_exit": null,
+      "exit_is_old": null,
+      "mile_marker": null,
+      "raw": "Mass Ave and Newbury"
+    },
+    "claims": [
+      {
+        "subject": "suspect",
+        "attribute": "weapon",
+        "value": "knife",
+        "quote": "The guy from the store just pulled a knife on someone here.",
+        "first_hand": true,
+        "confidence": 0.95
+      },
+      {
+        "subject": "suspect",
+        "attribute": "sex",
+        "value": "male",
+        "quote": "The guy from the store",
+        "first_hand": true,
+        "confidence": 0.8
+      }
+    ],
+    "summary": "Man from a store pulled a knife on someone and is pointing it at people at Mass Ave and Newbury."
+  },
+  "claims": [
+    {
+      "id": "clm-0031",
+      "call_id": "c-0010",
+      "incident_id": "inc-0001",
+      "subject": "suspect",
+      "attribute": "weapon",
+      "value": "knife",
+      "quote": "The guy from the store just pulled a knife on someone here.",
+      "first_hand": true,
+      "confidence": 0.95,
+      "status": "verified",
+      "weight": 0.65,
+      "provisional": false,
+      "created_at": "2026-10-24T14:06:00-04:00"
+    },
+    {
+      "id": "clm-0032",
+      "call_id": "c-0010",
+      "incident_id": "inc-0001",
+      "subject": "suspect",
+      "attribute": "sex",
+      "value": "male",
+      "quote": "The guy from the store",
+      "first_hand": true,
+      "confidence": 0.8,
+      "status": "verified",
+      "weight": 0.65,
+      "provisional": false,
+      "created_at": "2026-10-24T14:06:00-04:00"
+    }
+  ],
+  "location": {
+    "lat": 42.3485,
+    "lng": -71.0878,
+    "h3": "892a3066373ffff",
+    "kind": "intersection",
+    "label": "Massachusetts Ave & Newbury St, Boston",
+    "town": "Boston",
+    "confidence": 0.9,
+    "ambiguous": false,
+    "candidates": [],
+    "agency_hint": null
+  },
+  "link": {
+    "call_id": "c-0010",
+    "incident_id": "inc-0001",
+    "p_same": 0.8915,
+    "band": "auto",
+    "components": {
+      "geo": 0.9583297605313932,
+      "time": 0.9444444444444444,
+      "type": 0.6,
+      "entity": 1.0
+    },
+    "gates": [],
+    "decided_by": "system"
+  },
+  "queue_item": {
+    "call_id": "c-0010",
+    "incident_id": "inc-0001",
+    "received_at": "2026-10-24T14:06:00-04:00",
+    "priority": 90,
+    "band": "auto",
+    "p_same": 0.8915,
+    "novelty": 0.6667,
+    "severity": 0.9,
+    "new_info": true,
+    "override_reasons": [
+      "new_weapon",
+      "new_location"
+    ],
+    "summary": "Man from a store pulled a knife on someone and is pointing it at people at Mass Ave and Newbury.",
+    "language": "en",
+    "channel": "voice",
+    "caller_role": "witness",
+    "location_label": "Massachusetts Ave & Newbury St, Boston"
+  }
+}

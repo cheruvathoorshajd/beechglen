@@ -1,0 +1,17 @@
+{
+  "calls": 28,
+  "incidents": 5,
+  "collapse_rate": 0.8214,
+  "bands": {
+    "auto": 21,
+    "suggest": 1,
+    "new": 5,
+    "confirmed": 1
+  },
+  "new_info_calls": 10,
+  "guard": {
+    "verified": 86,
+    "pending_verification": 0,
+    "rejected": 0
+  }
+}
