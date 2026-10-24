@@ -6,6 +6,7 @@ import { LiveDot, Wordmark } from "../../ui";
 import { pct, tPlusSeconds } from "../../lib/format";
 import { useConsole } from "../../store";
 import { useDashboardSocket } from "../../hooks/useDashboardSocket";
+import { SessionControls } from "../../auth/SessionControls";
 
 const NAV = [
   { to: "/operator", label: "Operator" },
@@ -113,11 +114,11 @@ export function MetricsPanel({ metrics }: { metrics: Metrics | null }) {
 }
 
 /** Console frame: one socket for every console page, top bar, toasts. */
-export function ConsoleLayout({ children, headerExtra }: { children: ReactNode; headerExtra?: ReactNode }) {
+export function ConsoleLayout({ children }: { children: ReactNode }) {
   useDashboardSocket();
   return (
     <div className="enter flex h-screen min-h-0 flex-col bg-ground">
-      <TopBar extra={headerExtra} />
+      <TopBar extra={<SessionControls />} />
       <div className="min-h-0 flex-1">{children}</div>
       <Toasts />
     </div>

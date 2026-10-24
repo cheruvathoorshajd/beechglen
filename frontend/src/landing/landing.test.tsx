@@ -1,6 +1,7 @@
 import { screen, within } from "@testing-library/react";
 import { vi } from "vitest";
 import { renderAt } from "../test/render";
+import { setSession } from "../auth/session";
 import App from "../App";
 
 vi.mock("../components/console/IncidentMap", () => ({ IncidentMap: () => <div data-testid="map-stub" /> }));
@@ -42,9 +43,18 @@ describe("landing", () => {
     expect(screen.getByText(/Synthetic data only/)).toBeTruthy();
   });
 
-  it("CTAs open the console until sign-in exists", () => {
+  it("CTAs go to sign-in without a session", () => {
     renderAt("/", <App />);
-    expect(screen.getByRole("link", { name: "Get started" }).getAttribute("href")).toBe("/operator");
-    expect(screen.getByRole("link", { name: /Run the demo/ }).getAttribute("href")).toBe("/operator");
+    expect(screen.getByRole("link", { name: "Get started" }).getAttribute("href")).toBe("/signin");
+    expect(screen.getByRole("link", { name: /Run the demo/ }).getAttribute("href")).toBe("/signin");
+    expect(screen.getByRole("link", { name: "Sign in" }).getAttribute("href")).toBe("/signin");
+  });
+
+  it("CTAs read Open the console with a session", () => {
+    setSession({ kind: "local", name: "Dennis" });
+    renderAt("/", <App />);
+    expect(screen.getByRole("link", { name: "Open the console" }).getAttribute("href")).toBe("/operator");
+    expect(screen.getByRole("link", { name: /Run the demo/ }).getAttribute("href")).toBe("/welcome");
+    expect(screen.queryByRole("link", { name: "Sign in" })).toBeNull();
   });
 });

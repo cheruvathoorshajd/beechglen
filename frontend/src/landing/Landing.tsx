@@ -1,5 +1,7 @@
+import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ChoiceCard, Disc, Icon, SpecLabel, Wordmark, buttonClass, type IconName } from "../ui";
+import { endSignOut } from "../auth/guards";
 import { useStartTargets } from "./targets";
 import "./landing.css";
 
@@ -85,6 +87,7 @@ function Rich({ text }: { text: string }) {
 export default function Landing() {
   const targets = useStartTargets();
   const navigate = useNavigate();
+  useEffect(endSignOut, []);
 
   return (
     <div className="lp enter">

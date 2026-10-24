@@ -4,6 +4,7 @@ import type { QueueItem } from "../../api/types";
 import queue from "../../mocks/queue.json";
 import { renderAt } from "../../test/render";
 import { useConsole } from "../../store";
+import { markOnboarded, setSession } from "../../auth/session";
 import App from "../../App";
 import { PriorityPill } from "./chips";
 import { QueueCard } from "./QueueCard";
@@ -14,6 +15,8 @@ const base = (queue as QueueItem[])[0];
 
 beforeEach(() => {
   useConsole.setState({ queue: [], incidents: [], incident: null, selectedIncidentId: null, selectedCallId: null, loaded: false });
+  setSession({ kind: "guest" });
+  markOnboarded({ kind: "guest" });
 });
 
 describe("priority pill thresholds", () => {
