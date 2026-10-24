@@ -4,7 +4,7 @@
 
 Hackathon: `Nexus911` · Focus: Massachusetts · Built with Kiro · FastAPI · Claude · React
 
- **Demo video:** `https://youtu.be/VHyKyrJE-pw` · **Team:** Dennis, Kaushik, Arvind
+ **Demo video:** https://youtu.be/VHyKyrJE-pw · **Team:** Dennis, Kaushik, Arvind
 
 ---
 
