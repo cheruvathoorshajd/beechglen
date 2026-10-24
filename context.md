@@ -88,7 +88,7 @@ scripts, scenarios, cache, frontend, Dockerfile, tests).
 - [x] Stage 1: review fixes R1, R3, R4 (sanitizer), R5, R7 + tests for locate, link, client, sanitizer
 - [x] Stage 2: scenario data `data/scenarios/{mass_ave_robbery,pike_crash,washington_st}.json` (playbook 0.3); rules locked by `test_scenario_data.py`
 - [x] Stage 3: `pipeline/weigh.py`, `priority.py`, `dispatch.py` + tests (A-5..A-7)
-- [ ] Stage 4: `llm/prompts.py` (Appendix A-D verbatim), `pipeline/extract.py`, `pipeline/verify.py` + tests (B-1..B-3)
+- [x] Stage 4: `llm/prompts.py` (Appendix A-D verbatim), `pipeline/extract.py`, `pipeline/verify.py` + tests (B-1..B-3)
 - [ ] Stage 5: `flow/`, `context.py`, `graph/views.py`, store additions + flow test (A-8)
 - [ ] Stage 6: `realtime/bus.py`, `api/routes_*.py`, `main.py`, `run.py`, `llm/assist.py` (ask-next, briefing), `sim/replay.py` + API tests (B-4..B-7)
 - [ ] Stage 7: `scripts/precompute_extractions.py`, `scripts/evaluate.py`; run precompute (I2); `test_scenarios.py` (I4); evaluation table in README (P1)
@@ -109,6 +109,18 @@ scripts, scenarios, cache, frontend, Dockerfile, tests).
 
 - Stage 3: full suite → `.kiro/logs/pytest-stage3.txt` = 104 passed (adds test_weigh, test_priority, test_dispatch; README worked example 3/90/100 and 0.83/0.17 verified).
 
+- Stage 4: full suite → `.kiro/logs/pytest-stage4.txt` = 131 passed (adds test_verify, test_extract, test_prompts; prompts match KIRO_PROMPTS.md verbatim).
+
+## Module interfaces built so far
+
+- `pipeline.extract`: `Extractor(tool_caller=None, settings=get_settings, cache_dir=EXTRACTION_CACHE_DIR)`; `extractor(call) -> Extraction` (role hint applied), `.extract_raw(call)`, `.precompute(call) -> "cached"|"extracted"|"failed"`; module `extract(call)`. Cache file JSON = `{transcript, channel, model, extraction}`.
+- `pipeline.verify.ground(extraction, transcript) -> list[ClaimStatus]`; whole-word exact match → verified, ≥0.80 token coverage → pending, else rejected.
+- `pipeline.locate.resolve(mention, device, reference)`; `pipeline.link.decide(CallFeatures, [IncidentCandidate], settings) -> LinkOutcome`.
+- `pipeline.weigh`: `ClaimEvidence`, `claim_weight`, `repeat_callers`, `consensus`, `contradictions`, `consensus_lookup`.
+- `pipeline.priority`: `severity`, `IncidentSnapshot.build`, `novelty`, `override_reasons`, `priority`, `to_display`, `queue_order`.
+- `pipeline.dispatch`: `CallFacts`, `ClaimRef`, `build_package`, `is_dispatch_ready`, `suggest_leads -> [LeadSuggestion(key, description, source_claim_ids)]`.
+- `llm.client.call_tool(...)`, `llm.schema.tool_schema/sanitize`, `llm.prompts.*_SYSTEM/*_TOOL/MISSING_RULES/AGENT_*`.
+
 ## Scenario data notes
 
 - 28 calls: robbery c01-c12 (A, plus B = c12), pike p01-p12 (C), washington w01-w04 (D, E). Every robbery caller except c10 and c12 names Mass Ave and Boylston; flight directions are separate sentences ("He ran toward Hynes station"). Pike SUV is always mentioned before the pickup, so extraction maps the SUV to subject `vehicle`. Device jitter stays within ±0.0003.
@@ -119,4 +131,4 @@ scripts, scenarios, cache, frontend, Dockerfile, tests).
 
 ## Next step
 
-Stage 4: `llm/prompts.py` (Appendix A-D copied verbatim from KIRO_PROMPTS.md, tool schemas via `llm/schema.tool_schema` with subject/attribute enums), `pipeline/extract.py` (sha256 cache, cache_first/offline, caller_role_hint override, minimal fallback, `sanitize()`), `pipeline/verify.py` (exact → verified, ≥80% tokens → pending, else rejected) + test_extract.py, test_verify.py.
+Stage 5: orchestration. `flow/state.py` (CallFlowState TypedDict), `flow/nodes/` (one factory per stage: extract, verify, locate, link, weigh, prioritize, dispatch), `flow/builder.py` (intake graph extract→verify; commit graph locate→…→dispatch), `flow/runner.py` (`FlowRunner.process_call/confirm_link/split_call`, commit under `AppContext.lock`), `context.py` (AppContext), `graph/views.py` (queue, incidents, incident_detail, call_detail, explain, metrics, create_lead, update_lead), store additions (consensus on incident, lead upsert by key) + `test_flow.py` with hand-built extractions.

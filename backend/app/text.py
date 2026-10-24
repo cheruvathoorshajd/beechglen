@@ -28,15 +28,16 @@ def tokens(text: str) -> list[str]:
 
 
 def contains_exact(haystack: str, needle: str) -> bool:
-    """True when ``needle`` is a contiguous substring of ``haystack``.
+    """True when ``needle`` is a contiguous run of whole words in ``haystack``.
 
     Both sides are normalized first, so punctuation and casing differences do
-    not break an otherwise verbatim quote.
+    not break an otherwise verbatim quote. Matching on word boundaries keeps a
+    fragment such as "ite jacket" from passing as a quote of "white jacket".
     """
     normalized_needle = normalize(needle)
     if not normalized_needle:
         return False
-    return normalized_needle in normalize(haystack)
+    return f" {normalized_needle} " in f" {normalize(haystack)} "
 
 
 def token_coverage(needle: str, haystack: str) -> float:
