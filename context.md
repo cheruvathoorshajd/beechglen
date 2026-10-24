@@ -37,6 +37,11 @@ The terminal tool times out on slow commands and garbles long or multi-line ones
   `for i in $(seq 1 24); do grep -q '^exit=' .kiro/logs/X.txt && break; echo "waiting $i"; sleep 5; done; tail -n 30 .kiro/logs/X.txt`
 - Never run a bare sleep, and never read a log that doesn't contain the exit marker yet.
 - test_scenarios.py and evaluate.py drive the flow directly on the simulated clock (no real sleeps); each run finishes in seconds.
+- Never pipe a long run through `tail` (it holds output until exit and the tool returns first). Run long jobs in the background with an exit marker:
+  `(.venv/bin/python -m pytest -q --durations=10 > .kiro/logs/pytest-full.txt 2>&1; echo "exit=$?" >> .kiro/logs/pytest-full.txt) &`
+  then poll with the wait line above (pointed at that log).
+- If the marker hasn't appeared after two polls, the suite is hanging: run test files one at a time in the foreground (`.venv/bin/python -m pytest -q -x backend/tests/<file>`) to find the stuck file, then fix it.
+- Don't start a job and poll for it in the same parallel tool batch; start first, poll in the next call.
 
 ## Environment
 
@@ -100,7 +105,7 @@ scripts, scenarios, cache, frontend, Dockerfile, tests).
 - [x] Stage 4: `llm/prompts.py` (Appendix A-D verbatim), `pipeline/extract.py`, `pipeline/verify.py` + tests (B-1..B-3)
 - [x] Stage 5: `flow/`, `context.py`, `graph/views.py`, store additions + flow test (A-8)
 - [x] Stage 6: `realtime/bus.py`, `api/routes_*.py`, `main.py`, `run.py`, `llm/assist.py` (ask-next, briefing), `sim/replay.py` + API tests (B-4..B-7)
-- [ ] Stage 7: `scripts/precompute_extractions.py`, `scripts/evaluate.py`; run precompute (I2); `test_scenarios.py` (I4); evaluation table in README (P1)
+- [x] Stage 7: `scripts/precompute_extractions.py`, `scripts/evaluate.py`; run precompute (I2); `test_scenarios.py` (I4); evaluation table in README (P1)
 - [ ] Stage 8: frontend (0.6, 0.7, C-1..C-7, I3, P2) + build + smoke tests + mock/contract check
 - [ ] Stage 9: Dockerfile and .dockerignore (C-8). Deploy (P3) is left to the user.
 - [ ] Stage 10: stretch S1 caller chat, S2 corroboration agent + panel + tests
@@ -123,6 +128,14 @@ scripts, scenarios, cache, frontend, Dockerfile, tests).
 - Stage 5: full suite → `.kiro/logs/pytest-stage5.txt` = 139 passed (adds test_flow: duplicates, new weapon, fire gate, split, ambiguous suggest + confirm, Pike exits/transfer/injury, fail-open extraction, reset).
 
 - Stage 6: full suite → `.kiro/logs/pytest-stage6b.txt` = 150 passed, 0 warnings (adds test_api: every README endpoint in OpenAPI, WebSocket event, ask-next/briefing fallbacks, confirm/split 409/404, leads, settings validation, metrics, audit, replay + reset, SPA fallback). Live smoke: `nohup .venv/bin/python run.py > .kiro/logs/server.txt 2>&1 &` → `/openapi.json` 200, `/docs` 200, `/api/queue` 200 (`.kiro/logs/smoke.txt`); server stopped afterwards.
+
+- Stage 7: precompute → 28/28 extracted with claude-sonnet-5-5 (`.kiro/logs/precompute.txt`), re-run after the c03 fix → cached=27 extracted=1. Full suite → `.kiro/logs/pytest-full.txt` exit=0, 153 tests, slowest 0.05 s. `scripts/evaluate.py` (0 cache misses): clustering P/R/F1 1.00/1.00/1.00; new-incident recall 100% (5/5); new-info recall 100% (10/10); collapse 82% (28 → 5); claims 86/0/0; auto 22 / full intake 6. Table is in README "Evaluation".
+
+Note: the user made and pushed commits `6f29abc` ("Latest Kiro Commits") and `744608a` ("nexus911 testing"), which already hold the stage 7 code, scripts, tests, cache and c03 edit. The `stage-7` commit adds the README evaluation table and this file. Agent commits stay local (never push).
+
+## Stage 7 data fix (c03)
+
+c03's transcript ("A man just ran out of the store. He was wearing a black jacket.") never mentioned the robbery, so Claude extracted incident_type `other`. Type score 0.3 gave p_same 0.8225 (< 0.85) → band `suggest`, claims provisional, black jacket excluded from consensus → white share 0.918 (test range 0.75-0.90). Quotes were all verified. Fix (data only, no weights/thresholds/test changes): c03 now says "The man who robbed the store just ran out. He was wearing a black jacket."; stale cache file deleted and re-extracted. White share is now ≈0.83.
 
 ## Module interfaces built so far
 
@@ -156,4 +169,4 @@ scripts, scenarios, cache, frontend, Dockerfile, tests).
 
 ## Next step
 
-Stage 7: `scripts/precompute_extractions.py` (fills `data/cache/extractions/` for every scenario call via `Extractor.precompute`, skipping cached ones; needs the API key) and `scripts/evaluate.py` (replays every scenario in-process, cache only, prints the README metrics as a markdown table). Run precompute in the background with a log (real Claude calls, 28 transcripts). Then `test_scenarios.py` (I4 assertions, offline) and paste the evaluate table into README "Evaluation" (P1).
+Stage 8: frontend (KIRO_PROMPTS.md 0.7 + C1), one C1 task per commit. Hand-written `frontend/package.json` with pinned versions (Vite 6, React 18, react-leaflet 4, Leaflet 1.9, react-router-dom 6, Zustand 4, Tailwind 3, TypeScript 5, Vitest, @testing-library/react, jsdom); no create-vite. `npm install` in the background with the exit marker. Build against mocks first (VITE_USE_MOCKS=true), then the live API; `backend/app/contracts.py` is the authority for types. Verify each task with a background `npm run build` (exit marker) and a Vitest smoke test rendering each page from the mocks (Leaflet map stubbed).

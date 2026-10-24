@@ -498,11 +498,14 @@ All data is synthetic.
 
 | Metric | Result |
 |---|---|
-| Clustering precision / recall / F1 | `<from evaluate.py>` |
-| New-incident recall | `<from evaluate.py>` |
-| New-info escalation recall | `<from evaluate.py>` |
-| Duplicate collapse rate | `<from evaluate.py>` |
-| Claims verified / pending / rejected | `<from evaluate.py>` |
+| Clustering precision / recall / F1 | 1.00 / 1.00 / 1.00 |
+| New-incident recall | 100% (5/5) |
+| New-info escalation recall | 100% (10/10) |
+| Duplicate collapse rate | 82% (28 calls → 5 incidents) |
+| Claims verified / pending / rejected | 86 / 0 / 0 |
+| Workload proxy: auto (confirm-and-add) / full intake | 22 / 6 |
+
+These results come from the three synthetic demo scenarios (28 calls) written for this prototype, so they show the pipeline behaves as designed, not real-world accuracy.
 
 Report only numbers the script actually produced.
 
