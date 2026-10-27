@@ -1,9 +1,0 @@
-{
-  "scenario_id": "mass_ave_robbery",
-  "running": true,
-  "speed": 10.0,
-  "t_offset_s": 220.0,
-  "sim_time": "2026-10-24T14:03:40-04:00",
-  "calls_sent": 8,
-  "calls_total": 12
-}
